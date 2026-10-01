@@ -26,12 +26,19 @@ RUNS = {
     "gan": ROOT / "runs/gan/20260929_server_fresh",
     "soflow_v2": ROOT / "runs/soflow_v2/20260929_server_fresh",
 }
+FID_RUNS = {
+    ("vae", 1): ROOT / "results/self_fid/vae_20260929_server_fresh_nfe1",
+    ("gan", 1): ROOT / "results/self_fid/gan_20260929_server_fresh_nfe1",
+    ("soflow_v2", 1): ROOT / "results/self_fid/soflow_v2_20260929_server_fresh_nfe1",
+    ("soflow_v2", 4): ROOT / "results/self_fid/soflow_v2_20260929_server_fresh_nfe4",
+}
 METRICS = {
     "vae": ("total_loss", "reconstruction_loss", "kl_loss"),
     "gan": ("generator_loss", "discriminator_loss"),
     "soflow_v2": ("loss", "velocity_mse", "consistency_mse"),
 }
 SAMPLE_NAME = re.compile(r"^epoch_(\d{3})(?:_(ema|raw))?\.png$")
+COMPARE_SAMPLE_NAME = re.compile(r"^(?:0009|0014|0103|0129)_0[0-3]\.png$")
 BATCH = re.compile(r"SoFlow v2:[^\r\n]*\|\s*(\d+)/(\d+)\s*\[([^\]]*)\]")
 
 
@@ -78,6 +85,24 @@ def read_losses(path: Path, model: str) -> list[dict]:
     except (OSError, UnicodeError, csv.Error):
         return rows
     return rows
+
+
+def fid_results() -> list[dict]:
+    results = []
+    for (model, nfe), folder in FID_RUNS.items():
+        record = read_json(folder / "fid_result.json")
+        value = finite_float(record.get("fid"))
+        if record.get("status") != "self_computed_fid_not_ta_official" or value is None:
+            continue
+        results.append({
+            "model": model,
+            "nfe": nfe,
+            "fid": value,
+            "checkpoint_sha256": record.get("checkpoint_sha256"),
+            "weight_key": record.get("weight_key"),
+            "seed": record.get("seed"),
+        })
+    return results
 
 
 def process_alive(pid: object) -> bool | None:
@@ -184,7 +209,7 @@ def status_snapshot() -> dict:
                      manifest.get("status") == "running" else None,
         })
     return {"updated_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-            "runs": results, "gpu": gpu_state()}
+            "runs": results, "fid_results": fid_results(), "gpu": gpu_state()}
 
 
 PAGE = r"""<!doctype html>
@@ -204,17 +229,61 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:16p
 canvas{display:block;width:100%;height:150px}.sample-title{font-size:12px;color:#9aa8c7;margin:15px 0 7px}.sample{display:block;width:100%;max-height:270px;object-fit:contain;background:#0e1526;border:1px solid #2c3853;border-radius:9px;image-rendering:auto}
 .foot{margin-top:12px;border-top:1px solid #2c3853;padding-top:11px;font-size:12px;color:#9aa8c7;line-height:1.65}
 .gpu{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}.gpu span{background:#151d31;border:1px solid #2c3853;border-radius:10px;padding:9px 13px;font-size:13px}
-@media(max-width:980px){.grid{grid-template-columns:1fr 1fr}}@media(max-width:660px){.grid{grid-template-columns:1fr}body{padding:18px 14px}header{display:block}.pill{display:inline-block;margin-top:10px}}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 14px}.section-head h2{font-size:21px;margin:0}.section-head p{font-size:13px}
+.fid-board{margin-bottom:20px}.fid-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}.fid-item{background:#1d2940;border:1px solid #354563;border-radius:13px;padding:13px 15px}.fid-item span{font-size:13px;color:#b9c9e7}.fid-item strong{display:block;font-size:29px;margin:5px 0 2px;letter-spacing:-.04em}.fid-item small{color:#8fa0bf;font-size:12px}
+.compare{margin-top:20px}.compare h2{font-size:23px;margin:0 0 6px}.compare-note{font-size:13px;line-height:1.6}.compare-panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}.compare-panel{min-width:0}.compare-panel-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px}.compare-panel h3{font-size:17px;margin:0}.compare-fid{font-size:13px;color:#b9c9e7}.compare-sheet{display:grid;gap:3px}.compare-row{display:grid;grid-template-columns:76px repeat(4,minmax(0,1fr));gap:3px;align-items:center}.compare-row span{font-size:12px;color:#b9c9e7;overflow:hidden;text-overflow:ellipsis}.compare-row img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border:1px solid #3a4865;border-radius:4px;background:#0e1526}
+@media(max-width:980px){.grid{grid-template-columns:1fr 1fr}.fid-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.compare-panels{grid-template-columns:1fr}}@media(max-width:660px){.grid{grid-template-columns:1fr}body{padding:18px 14px}header{display:block}.pill{display:inline-block;margin-top:10px}.section-head{display:block}.section-head p{margin-top:4px}.compare-row{grid-template-columns:65px repeat(4,minmax(0,1fr))}}
 </style></head><body>
 <header><div><h1>FastGen 학습 현황</h1><p>서버 실행 기록 · 5초마다 자동 갱신 · 읽기 전용</p></div><div id="updated" class="pill">연결 중…</div></header>
-<div id="gpu" class="gpu"></div><main class="grid">
+<div id="gpu" class="gpu"></div>
+<section class="card fid-board" aria-label="모델별 FID"><div class="section-head"><h2>모델별 FID</h2><p>자체 평가 · 낮을수록 좋음 · 공식 제출 점수 아님</p></div><div class="fid-grid">
+<div class="fid-item" data-fid="vae-1"><span>VAE · 1회 생성</span><strong>—</strong><small>평가 결과 읽는 중</small></div>
+<div class="fid-item" data-fid="gan-1"><span>GAN · 1회 생성</span><strong>—</strong><small>평가 결과 읽는 중</small></div>
+<div class="fid-item" data-fid="soflow_v2-1"><span>SoFlow v2 · 1회 생성</span><strong>—</strong><small>평가 결과 읽는 중</small></div>
+<div class="fid-item" data-fid="soflow_v2-4"><span>SoFlow v2 · 4회 생성</span><strong>—</strong><small>평가 결과 읽는 중</small></div>
+</div></section><main class="grid">
 <section class="card" data-model="vae"><div class="top"><h2>VAE</h2><span class="state">확인 중</span></div><div class="progress-line"><strong class="epochs">—</strong><span class="small percent"></span></div><div class="track"><div class="fill"></div></div><div class="batch"></div><div class="metric"><select aria-label="VAE 손실 지표"></select><strong class="metric-value">—</strong></div><canvas aria-label="VAE 손실 곡선"></canvas><div class="sample-title">최근 샘플</div><img class="sample" alt="VAE 최근 생성 샘플"><div class="foot"></div></section>
 <section class="card" data-model="gan"><div class="top"><h2>GAN</h2><span class="state">확인 중</span></div><div class="progress-line"><strong class="epochs">—</strong><span class="small percent"></span></div><div class="track"><div class="fill"></div></div><div class="batch"></div><div class="metric"><select aria-label="GAN 손실 지표"></select><strong class="metric-value">—</strong></div><canvas aria-label="GAN 손실 곡선"></canvas><div class="sample-title">최근 샘플</div><img class="sample" alt="GAN 최근 생성 샘플"><div class="foot"></div></section>
 <section class="card" data-model="soflow_v2"><div class="top"><h2>SoFlow v2</h2><span class="state">확인 중</span></div><div class="progress-line"><strong class="epochs">—</strong><span class="small percent"></span></div><div class="track"><div class="fill"></div></div><div class="batch"></div><div class="metric"><select aria-label="SoFlow 손실 지표"></select><strong class="metric-value">—</strong></div><canvas aria-label="SoFlow 손실 곡선"></canvas><div class="sample-title">최근 EMA 샘플</div><img class="sample" alt="SoFlow 최근 EMA 생성 샘플"><div class="foot"></div></section>
-</main><script>
+</main>
+<section class="card compare" aria-label="SoFlow 생성 횟수별 비교"><h2>SoFlow v2 · 1회와 4회 비교</h2><p id="compare-note" class="compare-note">평가 결과를 확인하는 중…</p>
+<div class="compare-panels"><div class="compare-panel" data-nfe="1"><div class="compare-panel-head"><h3>1회 생성</h3><span class="compare-fid">FID —</span></div><div class="compare-sheet"></div></div>
+<div class="compare-panel" data-nfe="4"><div class="compare-panel-head"><h3>4회 생성</h3><span class="compare-fid">FID —</span></div><div class="compare-sheet"></div></div></div></section><script>
 const names={vae:'VAE',gan:'GAN',soflow_v2:'SoFlow v2'};
 const fmt=(x,d=3)=>Number.isFinite(x)?Number(x).toFixed(d):'—';
 const duration=s=>Number.isFinite(s)?`${Math.floor(s/3600)}시간 ${Math.floor(s%3600/60)}분`:'—';
+function buildComparison(){
+  const categories=[['피카츄','0103'],['파이리','0014'],['꼬부기','0129'],['이상해씨','0009']];
+  for(const nfe of [1,4]){
+    const sheet=document.querySelector(`[data-nfe="${nfe}"] .compare-sheet`);
+    for(const [name,id] of categories){
+      const row=document.createElement('div');row.className='compare-row';
+      const label=document.createElement('span');label.textContent=name;row.append(label);
+      for(let i=0;i<4;i++){
+        const img=document.createElement('img');
+        img.src=`/eval-sample/soflow_v2/${nfe}/${id}_${String(i).padStart(2,'0')}.png`;
+        img.alt=`${name} ${i+1}번, ${nfe}회 생성`;img.loading='lazy';row.append(img);
+      }
+      sheet.append(row);
+    }
+  }
+}
+function renderFids(results){
+  const byKey=new Map(results.map(r=>[`${r.model}-${r.nfe}`,r]));
+  for(const item of document.querySelectorAll('.fid-item')){
+    const record=byKey.get(item.dataset.fid);
+    item.querySelector('strong').textContent=record?fmt(record.fid,2):'—';
+    item.querySelector('small').textContent=record?'2026-09-29 서버 실행':'평가 결과 없음';
+  }
+  for(const nfe of [1,4]){
+    const record=byKey.get(`soflow_v2-${nfe}`);
+    document.querySelector(`[data-nfe="${nfe}"] .compare-fid`).textContent=`FID ${record?fmt(record.fid,2):'—'}`;
+  }
+  const one=byKey.get('soflow_v2-1'),four=byKey.get('soflow_v2-4');
+  document.getElementById('compare-note').textContent=one&&four&&one.checkpoint_sha256===four.checkpoint_sha256&&one.seed===four.seed&&one.weight_key==='ema_model'&&four.weight_key==='ema_model'
+    ?'같은 200에폭 EMA 체크포인트와 시드 사용 · 같은 행과 열은 동일한 카테고리·샘플 번호입니다.'
+    :'두 평가의 모델과 시드 정보를 확인할 수 없습니다.';
+}
 function plot(canvas,rows,key){
   const width=canvas.clientWidth||300,height=150,dpr=window.devicePixelRatio||1;
   canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);
@@ -246,7 +315,9 @@ function renderRun(r){
   plot(card.querySelector('canvas'),r.history,sel.value);
   const img=card.querySelector('img');
   if(r.sample){const src=`/sample/${r.model}?v=${r.sample.mtime_ns}`;if(img.getAttribute('src')!==src)img.src=src;
-    card.querySelector('.sample-title').textContent=`최근 ${r.sample.kind==='ema'?'EMA ':''}샘플 · ${r.sample.epoch} 에폭`;
+    card.querySelector('.sample-title').textContent=r.model==='soflow_v2'
+      ?`학습 중 저장한 1회 생성 ${r.sample.kind==='ema'?'EMA ':''}샘플 · ${r.sample.epoch} 에폭`
+      :`최근 ${r.sample.kind==='ema'?'EMA ':''}샘플 · ${r.sample.epoch} 에폭`;
   }else{img.removeAttribute('src');card.querySelector('.sample-title').textContent='샘플 없음'}
   const bits=[`실행: ${r.run_id}`];if(Number.isFinite(last.peak_vram_gb))bits.push(`최대 VRAM ${fmt(last.peak_vram_gb,2)} GiB`);
   if(r.status==='completed')bits.push(`총 ${duration(r.wall_seconds)}`);
@@ -255,13 +326,13 @@ function renderRun(r){
 }
 async function refresh(){
   try{const response=await fetch('/api/status',{cache:'no-store'});if(!response.ok)throw Error(`HTTP ${response.status}`);
-    const data=await response.json();for(const r of data.runs)renderRun(r);
+    const data=await response.json();for(const r of data.runs)renderRun(r);renderFids(data.fid_results||[]);
     document.getElementById('updated').textContent=`갱신 ${new Date(data.updated_utc).toLocaleTimeString('ko-KR')}`;
     const gpu=document.getElementById('gpu');gpu.replaceChildren();
     if(data.gpu){const info=[data.gpu.name,`GPU ${data.gpu.utilization_percent}%`,`VRAM ${data.gpu.memory_used_mib} / ${data.gpu.memory_total_mib} MiB`];if(data.gpu.temperature_c!==null)info.push(`온도 ${data.gpu.temperature_c}°C`);for(const text of info){const span=document.createElement('span');span.textContent=text;gpu.append(span)}}
   }catch(e){document.getElementById('updated').textContent=`연결 오류 · ${e.message}`}
 }
-refresh();setInterval(refresh,5000);
+buildComparison();refresh();setInterval(refresh,5000);
 </script></body></html>"""
 
 
@@ -292,6 +363,18 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_bytes(selected[0].read_bytes(), "image/png")
             except OSError:
                 self.send_error(404, "Sample not found")
+        elif path.startswith("/eval-sample/soflow_v2/"):
+            parts = path.removeprefix("/eval-sample/soflow_v2/").split("/")
+            if len(parts) != 2 or parts[0] not in ("1", "4") or not COMPARE_SAMPLE_NAME.fullmatch(parts[1]):
+                self.send_error(404, "Evaluation sample not found")
+                return
+            sample_path = FID_RUNS[("soflow_v2", int(parts[0]))] / "generated" / parts[1]
+            try:
+                if sample_path.stat().st_size > 1_000_000:
+                    raise OSError("Evaluation sample is too large")
+                self.send_bytes(sample_path.read_bytes(), "image/png")
+            except OSError:
+                self.send_error(404, "Evaluation sample not found")
         else:
             self.send_error(404, "Not found")
 
