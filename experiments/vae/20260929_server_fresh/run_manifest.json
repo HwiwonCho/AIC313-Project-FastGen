@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "status": "completed",
+  "model": "vae",
+  "run_dir": "/root/AIC313-Project-FastGen/runs/vae/20260929_server_fresh",
+  "started_utc": "2026-09-29T10:49:10+00:00",
+  "ended_utc": "2026-09-29T11:07:28+00:00",
+  "wall_seconds": 1095.378,
+  "exit_code": 0,
+  "command": [
+    "/root/AIC313-Project-FastGen/.venv/bin/python",
+    "-u",
+    "/root/AIC313-Project-FastGen/train.py",
+    "--run-dir",
+    "/root/AIC313-Project-FastGen/runs/vae/20260929_server_fresh",
+    "--epochs",
+    "50",
+    "--batch-size",
+    "128",
+    "--workers",
+    "4",
+    "--seed",
+    "42"
+  ],
+  "command_shell": "/root/AIC313-Project-FastGen/.venv/bin/python -u /root/AIC313-Project-FastGen/train.py --run-dir /root/AIC313-Project-FastGen/runs/vae/20260929_server_fresh --epochs 50 --batch-size 128 --workers 4 --seed 42",
+  "working_directory": "/root/AIC313-Project-FastGen",
+  "config": {
+    "epochs": 50,
+    "batch_size": 128,
+    "workers": 4,
+    "seed": 42,
+    "base_channels": null
+  },
+  "git": {
+    "head": "e3f5120000cd91037017d86f23993492195101a5",
+    "branch": "main",
+    "status_porcelain": "M model.py\n M requirements.txt\n?? .gitignore\n?? SOURCE_ATTRIBUTION.md\n?? experiment_report.py\n?? gan_model.py\n?? inspect_soflow_checkpoint.py\n?? run_experiment.py\n?? soflow_model.py\n?? soflow_unet.py\n?? train.py\n?? train_gan.py\n?? train_soflow.py\n?? train_soflow_v2.py"
+  },
+  "source_sha256": {
+    "dataset.py": "71499057165a8d398fc9124b1bf2bbd4d8d5bb4b1d3784dab2c27da84cd34102",
+    "download_dataset.py": "e11fa0e9e803d0d3e0891e72573c1b6bc362601a09e9776746982c4d8373229f",
+    "evaluate.py": "6caf742b7667ec8f1dce9e4deb6da6b220bda672d23df6351c478312b66f3546",
+    "experiment_report.py": "069a82825ca1c3907756c045086741b15d346a3a6e53cd1026ae96b350eacd99",
+    "gan_model.py": "c1d1b61775e24717d580630edcbeea9ea72012fab411518cd8ef67d9f09c7f31",
+    "inspect_soflow_checkpoint.py": "2386cb1260e9bd0646e2a5784d3242def61be308ef1fd0fbe66468bee7888ce2",
+    "model.py": "63f9c0b4391051990be15e1d68b2cb7d3d7931626e099e8562340d80cca09bb8",
+    "run_experiment.py": "17b3f450c6cbdc67aad23ea5a1530191528b7078bee383043c96794a7c06e288",
+    "soflow_model.py": "629727b4dc0ba39c599ae2aa5776b7c23db48bd0c95963f777cc8ee7801d9dbf",
+    "soflow_unet.py": "8031bcb16c826906d2d3bfc79340b6c73fdedc7ed97339573db30b4e1c109a96",
+    "train.py": "0e240f3b0c28a8214e6d1c26bf8bb43d5dde310975d2cc4fc56e6843e6390908",
+    "train_gan.py": "63834413cff6f930b59dbbcb37823f716301cadcd95c18d64d263a02f432595f",
+    "train_soflow.py": "61047ee3d91c765f21c2c56b628b8fd0c35e2896556e049f27805bcdcdccc2fb",
+    "train_soflow_v2.py": "c88012f15e8985fad32ae87055e2962c6304813aff3b92d1d5ec021a09590fd3",
+    "src/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/utils.py": "e6e2de83dac3f149cb6e8c59dffb6b35efebd87677101ecb334a17c3258ae3c7"
+  },
+  "requirements_sha256": "d307978eb500512082655fb84a767e59eb27c83871c5600911c85730d6219f4a",
+  "data_sha256": {
+    "train_split.txt": "65a82a52c7e88455d5b00b0fead4d6b3bf87205f31a4732eb96800e88e75d0f9",
+    "category_to_id.json": "a1e60fb8c2acacdc1f21445902ddd7b42b86ae5ed8f6d54393d1b3829ee7cc8c"
+  },
+  "environment": {
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "python_executable": "/root/AIC313-Project-FastGen/.venv/bin/python",
+    "package_versions": {
+      "torch": "2.6.0+cu124",
+      "torchvision": "0.21.0+cu124",
+      "Pillow": "12.3.0",
+      "numpy": "1.26.4",
+      "scipy": "1.15.3",
+      "clean-fid": "0.1.35",
+      "tqdm": "4.70.1",
+      "kagglehub": "1.0.2"
+    },
+    "gpu": {
+      "available": true,
+      "names": [
+        "GRID A100D-20C"
+      ],
+      "torch_cuda": "12.4"
+    },
+    "CUDA_VISIBLE_DEVICES": null,
+    "PYTHONHASHSEED": null
+  },
+  "pid": 23837,
+  "report": {
+    "attempted": true,
+    "exit_code": 0,
+    "output": "Plot: /root/AIC313-Project-FastGen/runs/vae/20260929_server_fresh/loss_curves.png\nNotion draft: /root/AIC313-Project-FastGen/runs/vae/20260929_server_fresh/experiment_summary.generated.md\n"
+  },
+  "measurements": {
+    "parameters": 20885507,
+    "generator_parameters": null,
+    "discriminator_parameters": null,
+    "peak_vram_gb": 2.167901039123535,
+    "completed_epochs": 50
+  },
+  "artifacts": {
+    "latest.ckpt": {
+      "path": "latest.ckpt",
+      "bytes": 251181814,
+      "sha256": "a6c0e392fc05068dad5f03e9048012473f304777e90c0d590c36510e712666f9"
+    },
+    "losses.csv": {
+      "path": "losses.csv",
+      "bytes": 6067,
+      "sha256": "d8fc392d08aa510816ad43f24d066c07cda867a79018b174edfbbf22a86a299c"
+    },
+    "loss_curves.png": {
+      "path": "loss_curves.png",
+      "bytes": 26477,
+      "sha256": "eefe5c720a082f97baafb90df7a18d2480d501875482905ef857cf26e4a0e29c"
+    },
+    "train.log": {
+      "path": "train.log",
+      "bytes": 1136107,
+      "sha256": "fdccbd4d802c4853052736f53168e179fcec40a116e5df9e379c3d22cc9ce30d"
+    },
+    "experiment_summary.generated.md": {
+      "path": "experiment_summary.generated.md",
+      "bytes": 1246,
+      "sha256": "a8dd6fc93a3397a43004b06ce865704a868a87e64c620a576734fe6dbc5fb735"
+    }
+  },
+  "samples": [
+    "epoch_005.png",
+    "epoch_010.png",
+    "epoch_015.png",
+    "epoch_020.png",
+    "epoch_025.png",
+    "epoch_030.png",
+    "epoch_035.png",
+    "epoch_040.png",
+    "epoch_045.png",
+    "epoch_050.png"
+  ],
+  "snapshots": []
+}

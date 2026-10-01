@@ -1,0 +1,245 @@
+{
+  "schema_version": 1,
+  "status": "completed",
+  "model": "soflow",
+  "run_dir": "/root/AIC313-Project-FastGen/runs/soflow_v2/20260929_server_fresh",
+  "started_utc": "2026-09-29T11:26:53+00:00",
+  "ended_utc": "2026-09-29T21:23:09+00:00",
+  "wall_seconds": 35773.994,
+  "exit_code": 0,
+  "command": [
+    "/root/AIC313-Project-FastGen/.venv/bin/python",
+    "-u",
+    "/root/AIC313-Project-FastGen/train_soflow_v2.py",
+    "--run-dir",
+    "/root/AIC313-Project-FastGen/runs/soflow_v2/20260929_server_fresh",
+    "--epochs",
+    "200",
+    "--batch-size",
+    "32",
+    "--num-workers",
+    "4",
+    "--base-channels",
+    "128"
+  ],
+  "command_shell": "/root/AIC313-Project-FastGen/.venv/bin/python -u /root/AIC313-Project-FastGen/train_soflow_v2.py --run-dir /root/AIC313-Project-FastGen/runs/soflow_v2/20260929_server_fresh --epochs 200 --batch-size 32 --num-workers 4 --base-channels 128",
+  "working_directory": "/root/AIC313-Project-FastGen",
+  "config": {
+    "epochs": 200,
+    "batch_size": 32,
+    "workers": 4,
+    "seed": 42,
+    "base_channels": 128
+  },
+  "git": {
+    "head": "e3f5120000cd91037017d86f23993492195101a5",
+    "branch": "main",
+    "status_porcelain": "M model.py\n M requirements.txt\n?? .gitignore\n?? EXPERIMENTS.md\n?? SOURCE_ATTRIBUTION.md\n?? curate_experiment.py\n?? experiment_report.py\n?? experiments/\n?? gan_model.py\n?? inspect_soflow_checkpoint.py\n?? run_experiment.py\n?? self_eval_fid.py\n?? soflow_model.py\n?? soflow_unet.py\n?? train.py\n?? train_gan.py\n?? train_soflow.py\n?? train_soflow_v2.py"
+  },
+  "source_sha256": {
+    "curate_experiment.py": "f586e80782295dc266707ea64ccc309a0a3b8d759144644f8cc044879867fd6a",
+    "dataset.py": "71499057165a8d398fc9124b1bf2bbd4d8d5bb4b1d3784dab2c27da84cd34102",
+    "download_dataset.py": "e11fa0e9e803d0d3e0891e72573c1b6bc362601a09e9776746982c4d8373229f",
+    "evaluate.py": "6caf742b7667ec8f1dce9e4deb6da6b220bda672d23df6351c478312b66f3546",
+    "experiment_report.py": "069a82825ca1c3907756c045086741b15d346a3a6e53cd1026ae96b350eacd99",
+    "gan_model.py": "c1d1b61775e24717d580630edcbeea9ea72012fab411518cd8ef67d9f09c7f31",
+    "inspect_soflow_checkpoint.py": "2386cb1260e9bd0646e2a5784d3242def61be308ef1fd0fbe66468bee7888ce2",
+    "model.py": "63f9c0b4391051990be15e1d68b2cb7d3d7931626e099e8562340d80cca09bb8",
+    "run_experiment.py": "17b3f450c6cbdc67aad23ea5a1530191528b7078bee383043c96794a7c06e288",
+    "self_eval_fid.py": "8aefcf277b780e69c7b893b6589770e59b6af942458ee9fe6534bc9835bfe37e",
+    "soflow_model.py": "629727b4dc0ba39c599ae2aa5776b7c23db48bd0c95963f777cc8ee7801d9dbf",
+    "soflow_unet.py": "8031bcb16c826906d2d3bfc79340b6c73fdedc7ed97339573db30b4e1c109a96",
+    "train.py": "0e240f3b0c28a8214e6d1c26bf8bb43d5dde310975d2cc4fc56e6843e6390908",
+    "train_gan.py": "63834413cff6f930b59dbbcb37823f716301cadcd95c18d64d263a02f432595f",
+    "train_soflow.py": "61047ee3d91c765f21c2c56b628b8fd0c35e2896556e049f27805bcdcdccc2fb",
+    "train_soflow_v2.py": "fd9f26fb0ee6ae854101a90ba4b06a232226c5059d06db4e10de9136c386516a",
+    "src/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/utils.py": "e6e2de83dac3f149cb6e8c59dffb6b35efebd87677101ecb334a17c3258ae3c7"
+  },
+  "requirements_sha256": "22b621671ba6421976fdecb5e299efb9ba8fa804dc0a457589356a9af8ba93bb",
+  "data_sha256": {
+    "train_split.txt": "65a82a52c7e88455d5b00b0fead4d6b3bf87205f31a4732eb96800e88e75d0f9",
+    "category_to_id.json": "a1e60fb8c2acacdc1f21445902ddd7b42b86ae5ed8f6d54393d1b3829ee7cc8c"
+  },
+  "environment": {
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "python_executable": "/root/AIC313-Project-FastGen/.venv/bin/python",
+    "package_versions": {
+      "torch": "2.6.0+cu124",
+      "torchvision": "0.21.0+cu124",
+      "Pillow": "12.3.0",
+      "numpy": "1.26.4",
+      "scipy": "1.15.3",
+      "clean-fid": "0.1.35",
+      "tqdm": "4.70.1",
+      "kagglehub": "1.0.2"
+    },
+    "gpu": {
+      "available": true,
+      "names": [
+        "GRID A100D-20C"
+      ],
+      "torch_cuda": "12.4"
+    },
+    "CUDA_VISIBLE_DEVICES": null,
+    "PYTHONHASHSEED": null
+  },
+  "pid": 34567,
+  "report": {
+    "attempted": true,
+    "exit_code": 0,
+    "output": "Plot: /root/AIC313-Project-FastGen/runs/soflow_v2/20260929_server_fresh/loss_curves.png\nNotion draft: /root/AIC313-Project-FastGen/runs/soflow_v2/20260929_server_fresh/experiment_summary.generated.md\n"
+  },
+  "measurements": {
+    "parameters": 90090755,
+    "generator_parameters": null,
+    "discriminator_parameters": null,
+    "peak_vram_gb": 10.807551860809326,
+    "completed_epochs": 200
+  },
+  "artifacts": {
+    "latest.ckpt": {
+      "path": "latest.ckpt",
+      "bytes": 1442061218,
+      "sha256": "37dafcccc724b2518ffe9b3756c3287d27ea924ded96c35dff7d40719599132a"
+    },
+    "losses.csv": {
+      "path": "losses.csv",
+      "bytes": 32146,
+      "sha256": "832c32eb1b3ab47706e90565fc1105b9dcfc0cf5b7899bfadfcc8e11cf209343"
+    },
+    "loss_curves.png": {
+      "path": "loss_curves.png",
+      "bytes": 40711,
+      "sha256": "4d912939e3e1eeb5a504b42f41e9266cb8e65eedc8bcad0a9eeb046a493b03d8"
+    },
+    "train.log": {
+      "path": "train.log",
+      "bytes": 28531447,
+      "sha256": "552f6c0b9b6983c2e268d22f540d801a0dd49709d6d77fb54c49b34ecc51d8ce"
+    },
+    "experiment_summary.generated.md": {
+      "path": "experiment_summary.generated.md",
+      "bytes": 1411,
+      "sha256": "2f67b54c2f7d07d6d1d6f8decd2f9b1258ca789d87f27f62e655046e5cae02ac"
+    }
+  },
+  "samples": [
+    "epoch_001_ema.png",
+    "epoch_001_raw.png",
+    "epoch_005_ema.png",
+    "epoch_005_raw.png",
+    "epoch_010_ema.png",
+    "epoch_010_raw.png",
+    "epoch_015_ema.png",
+    "epoch_015_raw.png",
+    "epoch_020_ema.png",
+    "epoch_020_raw.png",
+    "epoch_025_ema.png",
+    "epoch_025_raw.png",
+    "epoch_030_ema.png",
+    "epoch_030_raw.png",
+    "epoch_035_ema.png",
+    "epoch_035_raw.png",
+    "epoch_040_ema.png",
+    "epoch_040_raw.png",
+    "epoch_045_ema.png",
+    "epoch_045_raw.png",
+    "epoch_050_ema.png",
+    "epoch_050_raw.png",
+    "epoch_055_ema.png",
+    "epoch_055_raw.png",
+    "epoch_060_ema.png",
+    "epoch_060_raw.png",
+    "epoch_065_ema.png",
+    "epoch_065_raw.png",
+    "epoch_070_ema.png",
+    "epoch_070_raw.png",
+    "epoch_075_ema.png",
+    "epoch_075_raw.png",
+    "epoch_080_ema.png",
+    "epoch_080_raw.png",
+    "epoch_085_ema.png",
+    "epoch_085_raw.png",
+    "epoch_090_ema.png",
+    "epoch_090_raw.png",
+    "epoch_095_ema.png",
+    "epoch_095_raw.png",
+    "epoch_100_ema.png",
+    "epoch_100_raw.png",
+    "epoch_105_ema.png",
+    "epoch_105_raw.png",
+    "epoch_110_ema.png",
+    "epoch_110_raw.png",
+    "epoch_115_ema.png",
+    "epoch_115_raw.png",
+    "epoch_120_ema.png",
+    "epoch_120_raw.png",
+    "epoch_125_ema.png",
+    "epoch_125_raw.png",
+    "epoch_130_ema.png",
+    "epoch_130_raw.png",
+    "epoch_135_ema.png",
+    "epoch_135_raw.png",
+    "epoch_140_ema.png",
+    "epoch_140_raw.png",
+    "epoch_145_ema.png",
+    "epoch_145_raw.png",
+    "epoch_150_ema.png",
+    "epoch_150_raw.png",
+    "epoch_155_ema.png",
+    "epoch_155_raw.png",
+    "epoch_160_ema.png",
+    "epoch_160_raw.png",
+    "epoch_165_ema.png",
+    "epoch_165_raw.png",
+    "epoch_170_ema.png",
+    "epoch_170_raw.png",
+    "epoch_175_ema.png",
+    "epoch_175_raw.png",
+    "epoch_180_ema.png",
+    "epoch_180_raw.png",
+    "epoch_185_ema.png",
+    "epoch_185_raw.png",
+    "epoch_190_ema.png",
+    "epoch_190_raw.png",
+    "epoch_195_ema.png",
+    "epoch_195_raw.png",
+    "epoch_200_ema.png",
+    "epoch_200_raw.png"
+  ],
+  "snapshots": [
+    {
+      "name": "ema_epoch_025.pt",
+      "bytes": 360498258
+    },
+    {
+      "name": "ema_epoch_050.pt",
+      "bytes": 360498258
+    },
+    {
+      "name": "ema_epoch_075.pt",
+      "bytes": 360498258
+    },
+    {
+      "name": "ema_epoch_100.pt",
+      "bytes": 360498258
+    },
+    {
+      "name": "ema_epoch_125.pt",
+      "bytes": 360498258
+    },
+    {
+      "name": "ema_epoch_150.pt",
+      "bytes": 360498258
+    },
+    {
+      "name": "ema_epoch_175.pt",
+      "bytes": 360498258
+    },
+    {
+      "name": "ema_epoch_200.pt",
+      "bytes": 360498258
+    }
+  ]
+}

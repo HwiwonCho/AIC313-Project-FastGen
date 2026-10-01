@@ -1,0 +1,39 @@
+.venv/
+.vscode/
+__pycache__/
+*.py[cod]
+*.log
+*.ckpt
+*.pt
+*.pth
+runs/
+results/
+checkpoints/
+data/pokemon-generation-one-22k/PokemonData/
+data/pokemon-generation-one-22k/.transparency_composited_on_white
+
+# Generated evaluation images and accidental in-repo archives
+/evaluation/
+/generated/
+/samples/
+/archives/
+/backup/
+/backups/
+*.tar
+*.tar.gz
+*.zip
+
+# Additional model-weight formats
+*.safetensors
+*.onnx
+
+
+# Temporary evidence staging during curation
+experiments/**/.curate-*/
+
+# Local planning and explanatory pages (never publish to GitHub)
+/EXPERIMENTS.md
+/SOURCE_ATTRIBUTION.md
+/experiments/README.md
+/experiments/**/README.md
+

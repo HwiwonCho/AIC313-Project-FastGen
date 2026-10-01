@@ -1,0 +1,8 @@
+kagglehub
+Pillow
+torch
+torchvision
+clean-fid==0.1.35
+tqdm
+numpy==1.26.4
+scipy==1.15.3

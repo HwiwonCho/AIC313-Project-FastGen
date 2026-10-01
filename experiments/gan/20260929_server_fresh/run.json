@@ -1,0 +1,26 @@
+{
+  "model_type": "gan",
+  "batch_size": 64,
+  "seed": 42,
+  "generator_learning_rate": 0.0002,
+  "discriminator_learning_rate": 0.0002,
+  "latent_dim": 128,
+  "num_categories": 151,
+  "diversity_weight": 0.2,
+  "train_images": 17079,
+  "train_split": "data/pokemon-generation-one-22k/train_split.txt",
+  "initial_parameter_counts": {
+    "generator": 17265795,
+    "discriminator": 6315937,
+    "total": 23581732
+  },
+  "started_utc": "2026-09-29T11:07:34.393232+00:00",
+  "torch_version": "2.6.0+cu124",
+  "final_parameter_counts": {
+    "generator": 17265795,
+    "discriminator": 6315937,
+    "total": 23581732
+  },
+  "completed_epochs": 50,
+  "finished_utc": "2026-09-29T11:26:51.854680+00:00"
+}

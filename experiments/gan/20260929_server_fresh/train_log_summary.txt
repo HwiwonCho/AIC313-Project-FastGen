@@ -1,0 +1,61 @@
+# Selected settings and every epoch summary from train.log
+# Batch tqdm output was excluded; full train.log remains in runs/.
+
+device: cuda
+train images: 17079
+categories: 151
+batches per epoch: 266
+sample rows: ('Pikachu', 'Charmander', 'Squirtle', 'Bulbasaur')
+generator parameters: 17265795
+discriminator parameters: 6315937
+
+Epoch 1/50 | G=0.956 | D=1.900 | real=0.348 | fake=-0.136
+Epoch 2/50 | G=0.495 | D=1.923 | real=-0.038 | fake=-0.158
+Epoch 3/50 | G=0.382 | D=1.938 | real=-0.059 | fake=-0.142
+Epoch 4/50 | G=0.365 | D=1.859 | real=0.048 | fake=-0.131
+Epoch 5/50 | G=0.381 | D=1.835 | real=0.053 | fake=-0.158
+Epoch 6/50 | G=0.374 | D=1.818 | real=0.053 | fake=-0.180
+Epoch 7/50 | G=0.369 | D=1.790 | real=0.069 | fake=-0.201
+Epoch 8/50 | G=0.386 | D=1.757 | real=0.083 | fake=-0.228
+Epoch 9/50 | G=0.406 | D=1.700 | real=0.130 | fake=-0.249
+Epoch 10/50 | G=0.434 | D=1.657 | real=0.161 | fake=-0.281
+Epoch 11/50 | G=0.466 | D=1.601 | real=0.189 | fake=-0.326
+Epoch 12/50 | G=0.487 | D=1.581 | real=0.220 | fake=-0.324
+Epoch 13/50 | G=0.517 | D=1.531 | real=0.255 | fake=-0.361
+Epoch 14/50 | G=0.552 | D=1.485 | real=0.286 | fake=-0.390
+Epoch 15/50 | G=0.550 | D=1.457 | real=0.315 | fake=-0.407
+Epoch 16/50 | G=0.580 | D=1.428 | real=0.344 | fake=-0.418
+Epoch 17/50 | G=0.618 | D=1.395 | real=0.340 | fake=-0.465
+Epoch 18/50 | G=0.614 | D=1.383 | real=0.382 | fake=-0.451
+Epoch 19/50 | G=0.650 | D=1.359 | real=0.392 | fake=-0.470
+Epoch 20/50 | G=0.659 | D=1.341 | real=0.399 | fake=-0.486
+Epoch 21/50 | G=0.675 | D=1.326 | real=0.422 | fake=-0.492
+Epoch 22/50 | G=0.705 | D=1.295 | real=0.443 | fake=-0.520
+Epoch 23/50 | G=0.697 | D=1.284 | real=0.473 | fake=-0.514
+Epoch 24/50 | G=0.739 | D=1.263 | real=0.474 | fake=-0.542
+Epoch 25/50 | G=0.738 | D=1.251 | real=0.491 | fake=-0.540
+Epoch 26/50 | G=0.760 | D=1.219 | real=0.521 | fake=-0.560
+Epoch 27/50 | G=0.779 | D=1.197 | real=0.540 | fake=-0.578
+Epoch 28/50 | G=0.772 | D=1.205 | real=0.532 | fake=-0.577
+Epoch 29/50 | G=0.781 | D=1.194 | real=0.550 | fake=-0.580
+Epoch 30/50 | G=0.800 | D=1.169 | real=0.573 | fake=-0.597
+Epoch 31/50 | G=0.818 | D=1.157 | real=0.580 | fake=-0.609
+Epoch 32/50 | G=0.825 | D=1.150 | real=0.577 | fake=-0.610
+Epoch 33/50 | G=0.847 | D=1.132 | real=0.604 | fake=-0.623
+Epoch 34/50 | G=0.860 | D=1.133 | real=0.596 | fake=-0.634
+Epoch 35/50 | G=0.855 | D=1.099 | real=0.623 | fake=-0.650
+Epoch 36/50 | G=0.878 | D=1.083 | real=0.632 | fake=-0.672
+Epoch 37/50 | G=0.870 | D=1.083 | real=0.651 | fake=-0.657
+Epoch 38/50 | G=0.880 | D=1.066 | real=0.674 | fake=-0.670
+Epoch 39/50 | G=0.920 | D=1.063 | real=0.657 | fake=-0.692
+Epoch 40/50 | G=0.905 | D=1.047 | real=0.685 | fake=-0.688
+Epoch 41/50 | G=0.920 | D=1.021 | real=0.701 | fake=-0.703
+Epoch 42/50 | G=0.922 | D=1.025 | real=0.703 | fake=-0.707
+Epoch 43/50 | G=0.951 | D=1.004 | real=0.703 | fake=-0.738
+Epoch 44/50 | G=0.938 | D=1.002 | real=0.724 | fake=-0.716
+Epoch 45/50 | G=0.933 | D=0.977 | real=0.745 | fake=-0.730
+Epoch 46/50 | G=0.955 | D=0.973 | real=0.754 | fake=-0.733
+Epoch 47/50 | G=0.954 | D=0.960 | real=0.777 | fake=-0.743
+Epoch 48/50 | G=0.987 | D=0.948 | real=0.780 | fake=-0.763
+Epoch 49/50 | G=0.978 | D=0.938 | real=0.787 | fake=-0.771
+Epoch 50/50 | G=0.992 | D=0.929 | real=0.794 | fake=-0.781
