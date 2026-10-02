@@ -1,0 +1,40 @@
+{
+  "extracted_kst": "2026-10-02T15:08:41.405305+09:00",
+  "source": "FastGen local lab v2 screening_runner.py",
+  "source_sha256": "8546fa075849a696a9fbf0b34965026ed3d48ae909c94aaa5385e9a10b7a50d4",
+  "functions": {
+    "augmentation": {
+      "source_first_line": 185,
+      "source_last_line": 198,
+      "source_text_sha256": "a3e962d0fcb8f13fefb514f87e71cb5cac82e3ccce0c251266180f75f631dd73"
+    },
+    "image_augmentation": {
+      "source_first_line": 201,
+      "source_last_line": 207,
+      "source_text_sha256": "7306ba1293c319668e0a1b7cecd630e97182049779c547341f2569b2c6c28a96"
+    }
+  },
+  "behavior": "Original functions copied without semantic changes; training integration is not included. White fill remains current behavior. Corner-color fill is a proposed separate comparison, not implemented or evaluated here.",
+  "new_dependencies": [],
+  "publication_scope": "Augmentation source, imports, usage and provenance only; no images, weights, results, local paths or training state.",
+  "verification": {
+    "runtime": {
+      "python": "3.10.21",
+      "torch": "2.9.0+cu128",
+      "torchvision": "0.24.0+cu128"
+    },
+    "device": "CPU",
+    "cpu_threads": 2,
+    "cuda_initialized": false,
+    "function_AST_identical_to_frozen_source": true,
+    "checks": [
+      "image_none",
+      "image_flip",
+      "image_spatial",
+      "gan_none_gradient",
+      "gan_weak_gradient",
+      "gan_cutout_gradient"
+    ],
+    "scope": "Standalone imports, shapes, finite outputs and GAN input gradients. No model, training or image-quality experiment; no assertion of cross-version bitwise equivalence."
+  }
+}
