@@ -1,0 +1,10 @@
+{
+  "steps": 188000,
+  "lr": 0.0001,
+  "horizon": 170800,
+  "warmup": 4270,
+  "grouped16_after": 6000,
+  "eval_every": 2000,
+  "save_every": 1000,
+  "selection": "train_holdout3412"
+}

@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.venv/
+.test_tmp/
+runs/
+results/
+checkpoints/
+submission/
+*.pt
+*.ckpt
+.env
+.env.*
+data/pokemon-generation-one-22k/PokemonData/

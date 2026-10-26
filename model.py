@@ -91,16 +91,23 @@ class ModelOneNFE(Model):
 
 
 class ModelFewNFE(Model):
-    """Student model evaluated with no more than four model evaluations."""
+    """Exact historical server EMA architecture and four-call re-noising."""
+    def __init__(self, device='cpu', **kwargs):
+        from soflow_model import SoFlow64
+        super().__init__(SoFlow64(num_categories=151,base_channels=128,
+                                 channel_mult=[1,2,2,4],num_blocks=3).to(device, memory_format=torch.channels_last))
+        self._extra_generators = {}
 
-    def __init__(self, device="cpu", **kwargs):
-        raise NotImplementedError("Implement the few-NFE model constructor.")
-    def sample(
-        self,
-        shape: tuple[int, ...],
-        *,
-        device: torch.device | str = "cuda",
-        category: torch.Tensor | None = None,
-        **kwargs,
-    ) -> torch.Tensor:
-        raise NotImplementedError("Implement sample() in ModelFewNFE.")
+    def sample(self, shape, *, device='cuda', category=None, **kwargs):
+        from best4_sampling import linear_renoise4, EXTRA_SEED
+        device=torch.device(device)
+        noise=kwargs.get('noise')
+        if noise is None:
+            noise=torch.randn(shape,device=device,dtype=torch.float32,generator=kwargs.get('generator'))
+        if category is None:category=torch.zeros(shape[0],device=device,dtype=torch.long)
+        category=category.to(device=device,dtype=torch.long)
+        if tuple(noise.shape)!=tuple(shape) or category.shape!=(shape[0],):raise ValueError('Sample shape/labels differ')
+        key=str(noise.device)
+        if key not in self._extra_generators:
+            self._extra_generators[key]=torch.Generator(device=noise.device).manual_seed(EXTRA_SEED)
+        return linear_renoise4(self.backbone,noise,category,self._extra_generators[key])

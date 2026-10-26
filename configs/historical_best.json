@@ -1,0 +1,12 @@
+{
+  "source_step": 188000,
+  "source_sha256": "025f2f1289e3a6112386b70a3e72563b4bfbeca3653fb941883a08bf5a0dd233",
+  "FID_validation3020_self": 37.20501830882199,
+  "initial_seed": 20261002,
+  "extra_seed": 20261008,
+  "generation_batch_size": 4,
+  "generation_dtype": "CUDA BF16 with FP32 weights",
+  "historical_selection": "validation3020 for checkpoint and sampler",
+  "TA_score": false,
+  "fresh_training_selection": "train_holdout3412"
+}
