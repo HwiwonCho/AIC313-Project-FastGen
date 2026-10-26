@@ -74,33 +74,26 @@ class Model(nn.Module):
 
 
 class ModelOneNFE(Model):
-    """Student model evaluated with exactly one model function evaluation."""
-
+    """One endpoint prediction with the distilled SoFlow backbone."""
     def __init__(self, device="cpu", **kwargs):
-        raise NotImplementedError("Implement the one-NFE model constructor.")
+        from networks.soflow_model import SoFlow64
+        super().__init__(SoFlow64(**kwargs).to(device) if kwargs else
+                         SoFlow64(base_channels=128, channel_mult=(1, 2, 2, 4), num_blocks=3).to(device))
 
-    def sample(
-        self,
-        shape: tuple[int, ...],
-        *,
-        device: torch.device | str = "cuda",
-        category: torch.Tensor | None = None,
-        **kwargs,
-    ) -> torch.Tensor:
-        raise NotImplementedError("Implement sample() in ModelOneNFE.")
+    def sample(self, shape, *, device="cuda", category=None, **kwargs):
+        from fastgen.sampling import sample_images
+        return sample_images(self.backbone, shape, category, device=device,
+                             method="endpoint1", **kwargs)
 
 
 class ModelFewNFE(Model):
-    """Student model evaluated with no more than four model evaluations."""
-
+    """Four endpoint predictions with linear re-noising; no runtime CFG."""
     def __init__(self, device="cpu", **kwargs):
-        raise NotImplementedError("Implement the few-NFE model constructor.")
-    def sample(
-        self,
-        shape: tuple[int, ...],
-        *,
-        device: torch.device | str = "cuda",
-        category: torch.Tensor | None = None,
-        **kwargs,
-    ) -> torch.Tensor:
-        raise NotImplementedError("Implement sample() in ModelFewNFE.")
+        from networks.soflow_model import SoFlow64
+        super().__init__(SoFlow64(**kwargs).to(device) if kwargs else
+                         SoFlow64(base_channels=128, channel_mult=(1, 2, 2, 4), num_blocks=3).to(device))
+
+    def sample(self, shape, *, device="cuda", category=None, **kwargs):
+        from fastgen.sampling import sample_images
+        return sample_images(self.backbone, shape, category, device=device,
+                             method="renoise4", **kwargs)

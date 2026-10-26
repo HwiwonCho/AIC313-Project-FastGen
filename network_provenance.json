@@ -1,0 +1,16 @@
+[
+  {
+    "file": "networks/soflow_unet.py",
+    "original_local_file": "C:\\Users\\harryjo\\Desktop\\FastGen-local-lab\\code_snapshot\\soflow_unet.py",
+    "original_sha256": "8031bcb16c826906d2d3bfc79340b6c73fdedc7ed97339573db30b4e1c109a96",
+    "adapted_sha256": "7235fafcfd802a8bd3df0474783d9319d9a369491dc3a80bba7ad7b7cb4b2612",
+    "changes": "numpy scalar math -> stdlib math"
+  },
+  {
+    "file": "networks/soflow_model.py",
+    "original_local_file": "C:\\Users\\harryjo\\Desktop\\FastGen-local-lab\\code_snapshot\\soflow_model.py",
+    "original_sha256": "629727b4dc0ba39c599ae2aa5776b7c23db48bd0c95963f777cc8ee7801d9dbf",
+    "adapted_sha256": "80789fddb23a9dc37d780285c39f194fc2fd09dfbd11b54042174213969bcbd0",
+    "changes": "package-relative import; standard forward API alias; original objectives unchanged"
+  }
+]

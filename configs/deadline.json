@@ -1,0 +1,75 @@
+{
+  "seed": 42,
+  "device": "cuda:0",
+  "precision": "bf16",
+  "architecture": {
+    "num_categories": 151,
+    "base_channels": 128,
+    "channel_mult": [
+      1,
+      2,
+      2,
+      4
+    ],
+    "num_blocks": 3
+  },
+  "vram_limit_bytes": 20000000000,
+  "minimum_free_bytes": 21474836480,
+  "microbatch": 16,
+  "accumulation": 1,
+  "eval_batch_size": 8,
+  "evaluation": {
+    "protocol": "yunseo_scaled_a80bbd0_train755_defaults_v1",
+    "seed": 27182,
+    "precision": "fp32",
+    "workers": 4
+  },
+  "holdout_per_class": 5,
+  "unique_sampling": false,
+  "pilot": {
+    "enabled": true,
+    "steps_each": 3000,
+    "minimum_fid_gain_for_spatial": 2.0,
+    "microbatch": 8,
+    "accumulation": 2
+  },
+  "fixed_augmentation_if_pilot_disabled": "flip",
+  "teacher": {
+    "steps": 200000,
+    "lr": 0.0001,
+    "horizon": 170800,
+    "warmup": 4270,
+    "eval_every": 5000
+  },
+  "pairs": {
+    "pairs_per_class": 512,
+    "shard_size": 128,
+    "batch_size": 8,
+    "seed": 101,
+    "precision": "fp32",
+    "method": "solution4"
+  },
+  "reflow": {
+    "enabled": false,
+    "steps": 50000,
+    "lr": 1e-05,
+    "horizon": 50000,
+    "warmup": 1000,
+    "eval_every": 5000
+  },
+  "distill": {
+    "steps": 25000,
+    "lr": 1e-05,
+    "horizon": 25000,
+    "warmup": 1000,
+    "eval_every": 5000
+  },
+  "save_every": 1000,
+  "log_every": 100,
+  "evaluate_official_at_end": true,
+  "final_evaluation_batch_size": 8,
+  "final_evaluation_seed": 20261002,
+  "execution": {
+    "soflow_prefetch_batches": 2
+  }
+}
