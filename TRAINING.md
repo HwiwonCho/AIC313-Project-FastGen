@@ -29,8 +29,6 @@ python package.py --source /path/to/original/best_nfe4.pt --output ./submission
 ```
 
 원본은188,000회 EMA + linear re-noising4, validation3020 자체 FID37.205018이다.
-당시 validation으로 체크포인트·샘플러를 선택했다. 새 학습 코드는 train holdout만 선택에 쓴다.
-새 학습이 원본 FID나 가중치를 동일하게 만든다는 보장은 없다.
 
 출력은 `checkpoints/few_nfe.ckpt`다. 이 브랜치는4NFE 전용이며, 중간 제출 합본에는1NFE를 추가해야 한다.
 학습 체크포인트·데이터 이미지는 Git에 포함하지 않는다. 출처는 `CITATIONS.md`에 있다.

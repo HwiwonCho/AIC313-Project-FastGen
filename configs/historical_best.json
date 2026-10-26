@@ -6,7 +6,5 @@
   "extra_seed": 20261008,
   "generation_batch_size": 4,
   "generation_dtype": "CUDA BF16 with FP32 weights",
-  "historical_selection": "validation3020 for checkpoint and sampler",
-  "TA_score": false,
-  "fresh_training_selection": "train_holdout3412"
+  "TA_score": false
 }
