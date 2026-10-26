@@ -97,10 +97,17 @@ def render(root,columns=100,lines=30):
         state='FID 평가 / 저장 처리'
     now=time.time()
     speed=None
-    if len(records)>1:
-        recent=records[-5:]
+    # Wall-clock gaps between sessions are not training throughput. Keep the
+    # original history on disk, but estimate from this session's records only.
+    sessions=[v for v in tail(root/current/'events.jsonl',40) if v.get('event')=='session_start'] if current else []
+    session_start=sessions[-1]['unix'] if sessions else 0
+    fresh=[v for v in records if v.get('unix',0)>=session_start]
+    if len(fresh)>1:
+        recent=fresh[-5:]
         elapsed=recent[-1]['unix']-recent[0]['unix']
         speed=(recent[-1]['step']-recent[0]['step'])/elapsed if elapsed>0 else None
+    elif fresh and fresh[-1].get('update_seconds',0)>0:
+        speed=1/fresh[-1]['update_seconds']
     eta=(target-step)/speed if speed and target else None
     peak=max((v.get('memory',{}).get('peak_allocated_bytes',0) for v in summaries.values()),default=0)/1e9
     util,used=gpu()
