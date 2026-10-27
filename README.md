@@ -491,3 +491,84 @@ zero score
 
 - [Pokemon Generation One - 22k](https://www.kaggle.com/datasets/bhawks/pokemon-generation-one-22k)
 
+
+
+## StyleGAN2-ADA one-NFE branch
+
+This branch adds an isolated `stylegan2/` package. Existing SoFlow programs and
+fixed skeleton files are unchanged; only `ModelOneNFE` in `model.py` is wired to
+the new generator. No run data, training images, checkpoints, or Inception weights
+are included. Importing modules does not start training.
+
+```text
+stylegan2/
+  models.py          # 64x64, 151 classes; G 99,800,472 / D 98,947,632 parameters
+  recipe.py          # optimizer, lazy R1/PL, EMA and ADA; explicit step API
+  data.py            # provided TRAIN only; duplicate-group holdout and sampling
+  train.py           # explicit CLI, atomic recovery, internal TRAIN-holdout FID
+  portable_ops.py    # native PyTorch compatibility, no compiled CUDA extensions
+  verify.py          # skeleton, operator derivatives, sampling and loader checks
+  benchmark.py       # bounded random-input timing; never loads data/checkpoints
+  skeleton.json      # fixed content and Model/ModelFewNFE verification hashes
+  upstream.py        # pinned NVIDIA source identity
+  vendor/            # NVIDIA sources and original license
+  SOURCES.md         # provenance and local adaptations
+```
+
+From the repository root, with the existing FastGen environment:
+
+```shell
+python -B -m stylegan2.verify
+python -B -m stylegan2.train --help
+# Optional synthetic timing only; discards all scratch weights:
+python -B -m stylegan2.benchmark --steps 16
+```
+
+Training is an explicit separate action. The following command is documentation,
+not an automatically launched job:
+
+```shell
+python -B -m stylegan2.train --data-root /path/to/pokemon-generation-one-22k --run runs/stylegan2/example
+```
+
+The data root must contain `PokemonData/`; fixed manifests are read from this
+repository. No downloader is invoked by the trainer. Place `STOP` in the run
+folder for a checkpointed exit. `--resume` requires identical code, recipe and
+data identity. Relocating the old flat implementation into this package changes
+its source identity: old local `current.pt` files are intentionally not silently
+resumed by this branch. Their original folder remains the recovery environment.
+Generator state-dict keys are unchanged. Internal best exports use `backbone.`
+keys for the preserved skeleton checkpoint loader. `ModelFewNFE` remains as in
+the base branch; this is not a complete two-model submission.
+
+**Dependencies.** The supplied `requirements.txt` is unchanged. No extra package
+installation, nvcc, Ninja, custom CUDA binary, or pretrained training network is
+required. NumPy is required by torchvision/clean-fid; requests by kagglehub and
+upstream dnnlib. These are existing transitive dependencies, not vendored wheels.
+The upstream dnnlib uses `distutils`; use Python 3.10, matching the starter setup.
+Verified environment: torch 2.9.0+cu128, torchvision 0.24.0+cu128, NumPy 2.2.6,
+Pillow 12.3.0, clean-fid 0.1.35, kagglehub 1.0.2, requests 2.34.2, tqdm 4.70.1.
+This is a tested version record, not a requirement to install CUDA 12.8 everywhere.
+The starter's torch 2.6 environment has not been tested by this branch. Clean-FID
+may obtain its standard evaluation-only Inception weights on first evaluation.
+
+**Recipe and limits.** Batch 32 / microbatch 8, full conditional G and projection
+D, NVIDIA logistic loss, lazy R1 every 16 updates and PL every 4, style mixing,
+EMA and ADA bgc are preserved. Accumulated gradients are averaged by micro/batch,
+as in the stopped local run; upstream's loop sums them. This intentional retained
+difference is not silently changed during packaging. The trainer enforces peak
+allocated memory below 20,000,000,000 bytes; short probes do not certify a whole
+future run. Each G, EMA and D separately has fewer than 100M parameters. Sampler
+verification checks one generator call for one-NFE output.
+
+**Evaluation.** Model selection uses a duplicate-group-separated holdout within
+provided TRAIN, with matched reference/generated label counts. No validation
+images are opened by training or internal evaluation. Internal FID is not directly
+comparable to official validation3020 FID. No new quality claim or FID improvement
+is made by this packaging change.
+
+The organization follows the separation of network/data/training/testing and
+preservation of skeleton interfaces in
+[Yunseo's scaled experiment](https://github.com/yunseopark-kaist/FastGen/tree/a80bbd0adbaff5ac81f7d9330955ac5e0a1b8421).
+Its training algorithm and white-fill affine augmentation are not copied.
+See [source attribution](stylegan2/SOURCES.md) for the pinned NVIDIA implementation.

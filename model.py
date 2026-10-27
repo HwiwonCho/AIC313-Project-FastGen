@@ -186,7 +186,12 @@ class ModelOneNFE(Model):
     """Student model evaluated with exactly one model function evaluation."""
 
     def __init__(self, device="cpu", **kwargs):
-        raise NotImplementedError("Implement the one-NFE model constructor.")
+        from stylegan2.models import Generator
+        if kwargs:
+            raise TypeError(f"Unexpected model arguments: {sorted(kwargs)}")
+        super().__init__(Generator().to(device))
+        if self.num_parameters > 100_000_000:
+            raise ValueError("One-NFE framework exceeds 100M parameters")
 
     def sample(
         self,
@@ -196,7 +201,13 @@ class ModelOneNFE(Model):
         category: torch.Tensor | None = None,
         **kwargs,
     ) -> torch.Tensor:
-        raise NotImplementedError("Implement sample() in ModelOneNFE.")
+        nfe = kwargs.pop("nfe", 1)
+        if nfe != 1:
+            raise ValueError("ModelOneNFE supports exactly one NFE")
+        seed = kwargs.pop("seed", None)
+        if kwargs:
+            raise TypeError(f"Unexpected sampling arguments: {sorted(kwargs)}")
+        return self.backbone.sample(shape, device=device, category=category, seed=seed)
 
 
 class ModelFewNFE(Model):
