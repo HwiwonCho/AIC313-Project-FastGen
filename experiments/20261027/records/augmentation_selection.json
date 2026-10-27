@@ -1,0 +1,12 @@
+{
+  "pilot_enabled": true,
+  "scores": {
+    "flip": 225.28797423140617,
+    "spatial": 200.10330612601547
+  },
+  "augmentation": "spatial",
+  "rule": "Spatial needs the predeclared absolute FID improvement; otherwise retain flip.",
+  "not_statistical_significance": true,
+  "not_a_long_run_quality_guarantee": true,
+  "official_validation_accessed": false
+}

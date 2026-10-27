@@ -1,0 +1,156 @@
+{
+  "time_kst": "2026-10-27T14:52:40.631108+09:00",
+  "teacher": {
+    "phase": "training",
+    "step": 173900,
+    "target_steps": 200000,
+    "best_train_proxy_fid": 67.32710212268927,
+    "active_wall_seconds": 70168.415463835,
+    "memory": {
+      "peak_allocated_bytes": 5690757632,
+      "peak_reserved_bytes": 5909774336,
+      "cuda_measured": true
+    },
+    "parameters_each_model": 95524611,
+    "source_sha256": null,
+    "signature": "3f86fe0b9519651cca12e93e37ba0282fd8734aeadd0c1138038fdd38976bc39",
+    "reference_overlaps_training": true,
+    "official_validation_accessed": false
+  },
+  "configuration": {
+    "seed": 42,
+    "device": "cuda:0",
+    "precision": "bf16",
+    "architecture": {
+      "num_categories": 151,
+      "base_channels": 128,
+      "channel_mult": [
+        1,
+        2,
+        2,
+        4
+      ],
+      "num_blocks": 3
+    },
+    "vram_limit_bytes": 20000000000,
+    "minimum_free_bytes": 21474836480,
+    "microbatch": 16,
+    "accumulation": 1,
+    "eval_batch_size": 8,
+    "evaluation": {
+      "protocol": "yunseo_scaled_a80bbd0_train755_defaults_v1",
+      "seed": 27182,
+      "precision": "fp32",
+      "workers": 4
+    },
+    "holdout_per_class": 5,
+    "unique_sampling": false,
+    "pilot": {
+      "enabled": true,
+      "steps_each": 3000,
+      "minimum_fid_gain_for_spatial": 2.0,
+      "microbatch": 8,
+      "accumulation": 2
+    },
+    "fixed_augmentation_if_pilot_disabled": "flip",
+    "teacher": {
+      "steps": 200000,
+      "lr": 0.0001,
+      "horizon": 170800,
+      "warmup": 4270,
+      "eval_every": 5000
+    },
+    "pairs": {
+      "pairs_per_class": 512,
+      "shard_size": 128,
+      "batch_size": 8,
+      "seed": 101,
+      "precision": "fp32",
+      "method": "solution4"
+    },
+    "reflow": {
+      "enabled": false,
+      "steps": 50000,
+      "lr": 1e-05,
+      "horizon": 50000,
+      "warmup": 1000,
+      "eval_every": 5000
+    },
+    "distill": {
+      "steps": 25000,
+      "lr": 1e-05,
+      "horizon": 25000,
+      "warmup": 1000,
+      "eval_every": 5000
+    },
+    "save_every": 1000,
+    "log_every": 100,
+    "evaluate_official_at_end": true,
+    "final_evaluation_batch_size": 8,
+    "final_evaluation_seed": 20261002,
+    "execution": {
+      "soflow_prefetch_batches": 2
+    }
+  },
+  "stages": {
+    "pilot_flip": {
+      "phase": "complete",
+      "step": 3000,
+      "target_steps": 3000,
+      "best_train_proxy_fid": 225.28797423140617,
+      "active_wall_seconds": 2807.6914407110307,
+      "memory": {
+        "peak_allocated_bytes": 4149980672,
+        "peak_reserved_bytes": 4345298944,
+        "cuda_measured": true
+      },
+      "parameters_each_model": 95524611,
+      "source_sha256": null,
+      "signature": "ca1467e27b122778adbf6c0bbe4551df9f5282ca3a6141295d7c371dfb1b7870",
+      "reference_overlaps_training": false,
+      "official_validation_accessed": false
+    },
+    "pilot_spatial": {
+      "phase": "complete",
+      "step": 3000,
+      "target_steps": 3000,
+      "best_train_proxy_fid": 200.10330612601547,
+      "active_wall_seconds": 2556.1862172088586,
+      "memory": {
+        "peak_allocated_bytes": 4149980672,
+        "peak_reserved_bytes": 4345298944,
+        "cuda_measured": true
+      },
+      "parameters_each_model": 95524611,
+      "source_sha256": null,
+      "signature": "325b759366f3056eb331a2099a5a7b3a76df7cb99c3cec65a1798194989a3c51",
+      "reference_overlaps_training": false,
+      "official_validation_accessed": false
+    },
+    "teacher": {
+      "phase": "training",
+      "step": 173900,
+      "target_steps": 200000,
+      "best_train_proxy_fid": 67.32710212268927,
+      "active_wall_seconds": 70168.415463835,
+      "memory": {
+        "peak_allocated_bytes": 5690757632,
+        "peak_reserved_bytes": 5909774336,
+        "cuda_measured": true
+      },
+      "parameters_each_model": 95524611,
+      "source_sha256": null,
+      "signature": "3f86fe0b9519651cca12e93e37ba0282fd8734aeadd0c1138038fdd38976bc39",
+      "reference_overlaps_training": true,
+      "official_validation_accessed": false
+    },
+    "reflow": null,
+    "distill": null
+  },
+  "teacher_source": null,
+  "checkpoints": {
+    "one_nfe.ckpt": false,
+    "few_nfe.ckpt": false
+  },
+  "first_initialization": "scratch"
+}

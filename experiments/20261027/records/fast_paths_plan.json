@@ -1,0 +1,28 @@
+{
+  "checkpoint_step": 135000,
+  "checkpoint_sha256": "2469bf3458feb223d30de8e2d974c47a09f6153df9b582bffd1224de02c45db6",
+  "reference": "fixed TRAIN755; same pixels as current training metric",
+  "seed": 27182,
+  "extra_seed": 20261008,
+  "batch_size": 8,
+  "precision": "fp32",
+  "candidates": [
+    {
+      "name": "quadratic_renoise4",
+      "grid": [
+        1.0,
+        0.5625,
+        0.25,
+        0.0625,
+        0.0
+      ],
+      "nfe": 4
+    },
+    {
+      "name": "euler32_teacher_only",
+      "nfe": 32
+    }
+  ],
+  "baseline_train755_FID": 67.73271091371623,
+  "validation_accessed": false
+}

@@ -1,0 +1,28 @@
+{
+  "quadratic_renoise4": {
+    "FID_train755": 75.6264399108619,
+    "difference_from_baseline": 7.893728997145672,
+    "nfe": 4,
+    "actual_calls": {
+      "batches": 380,
+      "image_forwards": 3020
+    },
+    "seconds": 34.70413309999276,
+    "valid_four_nfe_submission": true,
+    "validation_accessed": false,
+    "peak_allocated_bytes": 773647360
+  },
+  "euler32_teacher_only": {
+    "FID_train755": 62.81464771947145,
+    "difference_from_baseline": -4.91806319424478,
+    "nfe": 32,
+    "actual_calls": {
+      "batches": 3040,
+      "image_forwards": 24160
+    },
+    "seconds": 108.81534989998909,
+    "valid_four_nfe_submission": false,
+    "validation_accessed": false,
+    "peak_allocated_bytes": 773647360
+  }
+}

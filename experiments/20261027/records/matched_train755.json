@@ -1,0 +1,109 @@
+{
+  "results": {
+    "current": {
+      "FID_train_proxy": 67.73271091371623,
+      "samples": 755,
+      "seed": 27182,
+      "method": "renoise4",
+      "reference_groups_sha256": "1d36e40015a2d5441e3f0ef830cb2c6258f9cf7afd6431e35936214f92540b17",
+      "official_validation_accessed": false,
+      "not_a_TA_score": true,
+      "protocol": "yunseo_scaled_a80bbd0_train755_defaults_v1",
+      "reference_is_training_data": true,
+      "generation_precision": "fp32",
+      "batch_size": 8,
+      "workers": 0,
+      "actual_nfe": 4,
+      "actual_backbone_calls": {
+        "batches": 380,
+        "image_forwards": 3020
+      },
+      "matmul_tf32": false,
+      "cudnn_tf32": true,
+      "cudnn_benchmark": false,
+      "class_order": "0..150, five consecutive images per class",
+      "reference_png_sha256": "7d8a1b759f68c0f5108d065903c4bddb5e4b3428491c13aed4df0c670ceb00ea",
+      "clean_fid_mode": "clean (library default)",
+      "extra_renoise_seed": 20261008,
+      "metric_packages": {
+        "torch": "2.9.0+cu128",
+        "torchvision": "0.24.0+cu128",
+        "Pillow": "12.3.0",
+        "clean-fid": "0.1.35",
+        "numpy": "2.2.6",
+        "scipy": "1.15.3"
+      },
+      "step": 135000,
+      "checkpoint_sha256": "2469bf3458feb223d30de8e2d974c47a09f6153df9b582bffd1224de02c45db6",
+      "reference_decoded_pixels_match_server": true,
+      "reused_completed_evaluation": true
+    },
+    "previous_best": {
+      "FID_train_proxy": 63.17398549424615,
+      "samples": 755,
+      "seed": 27182,
+      "method": "renoise4",
+      "reference_groups_sha256": "1d36e40015a2d5441e3f0ef830cb2c6258f9cf7afd6431e35936214f92540b17",
+      "official_validation_accessed": false,
+      "not_a_TA_score": true,
+      "protocol": "yunseo_scaled_a80bbd0_train755_defaults_v1",
+      "reference_is_training_data": true,
+      "generation_precision": "fp32",
+      "batch_size": 8,
+      "workers": 0,
+      "actual_nfe": 4,
+      "actual_backbone_calls": {
+        "batches": 380,
+        "image_forwards": 3020
+      },
+      "matmul_tf32": false,
+      "cudnn_tf32": true,
+      "cudnn_benchmark": false,
+      "class_order": "0..150, five consecutive images per class",
+      "reference_png_sha256": "7d8a1b759f68c0f5108d065903c4bddb5e4b3428491c13aed4df0c670ceb00ea",
+      "clean_fid_mode": "clean (library default)",
+      "extra_renoise_seed": 20261008,
+      "metric_packages": {
+        "torch": "2.9.0+cu128",
+        "torchvision": "0.24.0+cu128",
+        "Pillow": "12.3.0",
+        "clean-fid": "0.1.35",
+        "numpy": "2.2.6",
+        "scipy": "1.15.3"
+      },
+      "step": 188000,
+      "checkpoint_sha256": "81794ed4ec770a2d4fea1086cf886d228475fb6d844cf3967b865809a4b937ed",
+      "reference_decoded_pixels_match_server": true,
+      "seconds": 50.95557390002068,
+      "peak_allocated_bytes": 651791872
+    }
+  },
+  "metric_calibration": {
+    "server_FID": 67.74971671587446,
+    "same_server_PNGs_local_FID": 67.71049447224703,
+    "difference": -0.039222243627420994,
+    "seconds": 29.032751300022937
+  },
+  "environment": {
+    "gpu": "NVIDIA GeForce RTX 5070 Ti",
+    "cuda": "12.8",
+    "packages": {
+      "torch": "2.9.0+cu128",
+      "torchvision": "0.24.0+cu128",
+      "Pillow": "12.3.0",
+      "clean-fid": "0.1.35",
+      "numpy": "2.2.6",
+      "scipy": "1.15.3"
+    },
+    "image_loader_workers": 0,
+    "server_image_loader_workers": 4,
+    "inception_sha256": "f58cb9b6ec323ed63459aa4fb441fe750cfe39fafad6da5cb504a16f19e958f4",
+    "backbone_parity": {
+      "bitwise_equal": true,
+      "max_absolute_difference": 0.0
+    }
+  },
+  "current_minus_previous": 4.558725419470079,
+  "server_training_interrupted": false,
+  "training_updates": 0
+}

@@ -1,0 +1,127 @@
+{
+  "ours": {
+    "parameters": 95524611,
+    "widths": [
+      128,
+      256,
+      256,
+      512
+    ],
+    "encoder_blocks_per_level": 3,
+    "decoder_blocks_per_level": 4,
+    "attention": [
+      {
+        "path": "network.enc.16x16_block0",
+        "heads": 1,
+        "channels": 256
+      },
+      {
+        "path": "network.enc.16x16_block1",
+        "heads": 1,
+        "channels": 256
+      },
+      {
+        "path": "network.enc.16x16_block2",
+        "heads": 1,
+        "channels": 256
+      },
+      {
+        "path": "network.dec.8x8_in0",
+        "heads": 1,
+        "channels": 512
+      },
+      {
+        "path": "network.dec.16x16_block3",
+        "heads": 1,
+        "channels": 256
+      }
+    ],
+    "dropout": [
+      0.1
+    ]
+  },
+  "yunseo_scaled": {
+    "parameters": 98402179,
+    "configuration": {
+      "num_classes": 151,
+      "base_channels": 128,
+      "channel_mult": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "blocks_per_level": 2,
+      "attention_resolutions": [
+        16,
+        8
+      ],
+      "dropout": 0.0,
+      "gradient_checkpointing": true,
+      "conditioning": "cfg",
+      "extra_middle_blocks": 1
+    },
+    "widths": [
+      128,
+      256,
+      384,
+      512
+    ],
+    "encoder_blocks_per_level": 2,
+    "decoder_blocks_per_level": 3,
+    "attention": [
+      {
+        "path": "down.2.0.attention",
+        "heads": 6
+      },
+      {
+        "path": "down.2.1.attention",
+        "heads": 6
+      },
+      {
+        "path": "down.3.0.attention",
+        "heads": 8
+      },
+      {
+        "path": "down.3.1.attention",
+        "heads": 8
+      },
+      {
+        "path": "middle.0.attention",
+        "heads": 8
+      },
+      {
+        "path": "middle.2.attention",
+        "heads": 8
+      },
+      {
+        "path": "up.0.0.attention",
+        "heads": 8
+      },
+      {
+        "path": "up.0.1.attention",
+        "heads": 8
+      },
+      {
+        "path": "up.0.2.attention",
+        "heads": 8
+      },
+      {
+        "path": "up.1.0.attention",
+        "heads": 6
+      },
+      {
+        "path": "up.1.1.attention",
+        "heads": 6
+      },
+      {
+        "path": "up.1.2.attention",
+        "heads": 6
+      }
+    ],
+    "dropout": [
+      0.0
+    ]
+  },
+  "CUDA_initialized": false
+}
