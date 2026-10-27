@@ -507,8 +507,10 @@ stylegan2/
   data.py            # provided TRAIN only; duplicate-group holdout and sampling
   train.py           # explicit CLI, atomic recovery, internal TRAIN-holdout FID
   portable_ops.py    # native PyTorch compatibility, no compiled CUDA extensions
+  conv_gradfix.py    # opt-in modern higher-order convolution path for PL/R1
   verify.py          # skeleton, operator derivatives, sampling and loader checks
   benchmark.py       # bounded random-input timing; never loads data/checkpoints
+  compare_speed.py   # same-seed ABBA timing/state comparison against eb9c864
   skeleton.json      # fixed content and Model/ModelFewNFE verification hashes
   upstream.py        # pinned NVIDIA source identity
   vendor/            # NVIDIA sources and original license
@@ -572,3 +574,56 @@ preservation of skeleton interfaces in
 [Yunseo's scaled experiment](https://github.com/yunseopark-kaist/FastGen/tree/a80bbd0adbaff5ac81f7d9330955ac5e0a1b8421).
 Its training algorithm and white-fill affine augmentation are not copied.
 See [source attribution](stylegan2/SOURCES.md) for the pinned NVIDIA implementation.
+
+
+**Regularization execution optimization.** `conv_gradfix.py` adapts NVIDIA's
+higher-order derivative implementation to modern ATen `convolution_backward`.
+With `--fast-regularization`, only PL/R1 use this path; ordinary phases and inference still use native forward
+operations. Model widths, batch/microbatch, losses and regularization intervals,
+augmentation, optimizer, EMA and random draw order are unchanged. No extra
+packages or compiled CUDA extensions are introduced. Built-in ATen compatibility
+is tested on torch 2.9.0; torch 2.6 remains untested.
+
+On RTX 5070 Ti, a same-seed ABBA comparison of 16-update synthetic cycles measured
+baseline 3.116/3.035 s/update and adapted 1.288/1.257 s/update: mean 3.076 -> 1.273,
+58.6% less update time (2.42x throughput). Peak allocated was 5.38 GB. These are
+bounded synthetic results, not end-to-end training/server estimates. The rejected
+synchronization-only candidate was 0.6% slower; cuDNN autotuning is NOT enabled.
+
+Validation commands (no TRAIN/checkpoint access or saved weights):
+
+```shell
+python -B -m stylegan2.verify_conv
+python -B -m stylegan2.verify_update
+python -B -m stylegan2.verify_update --gpu --frozen-phases
+python -B -m stylegan2.verify_update --gpu
+python -B -m stylegan2.compare_speed --steps 16
+```
+
+`compare_speed` reads baseline commit eb9c864 from Git history, needed only for this
+developer diagnostic. Construction, warmup and state hashing are outside timing.
+GPU baseline repeats themselves were not bitwise identical; hashes are reported,
+not treated as numerical equivalence proof. Derivative and update comparisons use
+explicit numerical tolerances. Neither unchanged eventual FID nor identical final
+weights across long runs is guaranteed. The stopped original run is not resumed
+or migrated automatically; its source-identity protection remains in force.
+
+
+The faster path is **opt-in**: add `--fast-regularization` to the training command.
+Default execution retains the original derivative backend, respecting the request
+not to change the stopped run's behavior. Switching the flag changes the saved
+recipe; strict resume refuses a mismatch rather than silently switching methods.
+No existing checkpoint was resumed or converted. Benchmarking that path alone:
+`python -B -m stylegan2.benchmark --steps 16 --fast-regularization`.
+
+Full-size deterministic GPU checks at equal weights measured relative L2 gradient
+difference 0 for Gmain/Dmain, 1.47e-5 for PL and 2.56e-3 for R1 (R1 max absolute
+error 3.44e-8). After one complete scratch update, parameter relative differences
+were G/EMA 7.37e-8 and D 3.56e-5; maximum element differences were 0.00434 and
+0.00732 respectively. Tiny gradient differences can be amplified by Adam and
+subsequent phases. This is mathematical/numerical validation, NOT proof of equal
+long-run FID. `verify_update --gpu --frozen-phases` checks equal-weight derivative
+tolerances; the ordinary update test reports propagated gradient differences and
+checks final parameters separately. Deterministic mode is confined to verification
+processes and does not alter the training configuration. The native-repeat control
+without deterministic mode also showed 1.67% PL gradient variation after Gmain.

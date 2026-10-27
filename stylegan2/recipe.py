@@ -5,7 +5,8 @@ No dataset access, checkpoint loading/saving, or external evaluation here.
 """
 from dataclasses import dataclass
 import torch
-from . import models
+from . import models, conv_gradfix
+conv_gradfix.install()
 from training.augment import AugmentPipe
 from training.loss import StyleGAN2Loss
 from torch_utils import training_stats
@@ -13,6 +14,7 @@ from torch_utils import training_stats
 
 @dataclass(frozen=True)
 class Config:
+    fast_regularization: bool = False
     batch: int = 32
     micro: int = 8
     lr: float = .0025
@@ -83,10 +85,11 @@ class UpdateEngine:
                 for offset in range(0, cfg.batch, cfg.micro):
                     z = torch.randn(cfg.micro, 512, device=self.device)
                     fake_y = torch.randint(151, (cfg.micro,), device=self.device)
-                    self.loss.accumulate_gradients(phase,
-                        real[offset:offset+cfg.micro], real_c[offset:offset+cfg.micro],
-                        z, models.labels_to_condition(fake_y), sync=False,
-                        gain=interval*cfg.micro/cfg.batch)
+                    with conv_gradfix.regularization(cfg.fast_regularization and phase in ('Greg', 'Dreg')):
+                        self.loss.accumulate_gradients(phase,
+                            real[offset:offset+cfg.micro], real_c[offset:offset+cfg.micro],
+                            z, models.labels_to_condition(fake_y), sync=False,
+                            gain=interval*cfg.micro/cfg.batch)
                 # Fail explicitly on numerical faults; never silently sanitize NaNs.
                 for p in module.parameters():
                     if p.grad is not None and not torch.isfinite(p.grad).all():

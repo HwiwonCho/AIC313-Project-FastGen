@@ -165,7 +165,7 @@ def main(args):
         torch.manual_seed(args.seed);np.random.seed(args.seed);random.seed(args.seed)
         source=source_identity();data=TrainData(args.data_root)
         atomic_json(run/'split.json',{'summary':data.summary,'fit':data.fit,'holdout':data.holdout})
-        cfg=Config(batch=32,micro=8)
+        cfg=Config(batch=32,micro=8,fast_regularization=args.fast_regularization)
         engine=UpdateEngine(Generator().cuda(),Discriminator().cuda(),cfg)
         assert count_parameters(engine.G)<=100_000_000 and count_parameters(engine.D)<=100_000_000
         sampler=torch.Generator().manual_seed(args.seed+1)
@@ -218,6 +218,8 @@ if __name__=='__main__':
     p.add_argument('--eval-every',type=int,default=250000,help='real-image exposures')
     p.add_argument('--seed',type=int,default=42)
     p.add_argument('--resume',action='store_true')
+    p.add_argument('--fast-regularization',action='store_true',
+                   help='Use verified modern gradfix for PL/R1; mathematically equivalent, not bitwise identical')
     p.add_argument('--smoke-eval',action='store_true')
     a=p.parse_args()
     if min(a.steps,a.save_every,a.eval_every)<=0:p.error('Intervals must be positive')

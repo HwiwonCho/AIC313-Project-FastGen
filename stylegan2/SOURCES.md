@@ -43,3 +43,6 @@
 - 패키지 분리, 상대 import, 데이터 루트 CLI로 개인 PC 절대 경로 의존성을 제거했다. 학습 레시피와 가중치 키는 유지한다.
 - 구조 참고: https://github.com/yunseopark-kaist/FastGen/tree/a80bbd0adbaff5ac81f7d9330955ac5e0a1b8421 — 기본 skeleton 보존, 네트워크/데이터/학습/검증 분리. 학습 코드는 이 저장소에서 복사하지 않았다.
 - `benchmark.py`: 데이터나 체크포인트 없이 합성 입력으로 단계별 비용을 측정하며 가중치는 저장하지 않는다.
+
+- `conv_gradfix.py`: 고정 NVIDIA `torch_utils/ops/conv2d_gradfix.py`를 출처로 삼아 제거된 cuDNN weight-gradient API를 내장 ATen `convolution_backward`로 교체했다. 원본 저작권 및 라이선스는 유지하며 vendor 원본은 수정하지 않았다. 명시적인 `--fast-regularization` 옵션의 PL/R1에서만 사용하고 기본 실행·일반 phase·추론은 native 경로를 유지한다.
+- `verify_conv.py`, `verify_update.py`: 미분 및 실제 update 수치 비교. `compare_speed.py`: baseline commit과 합성 ABBA 속도 비교. GPU 부동소수점 결과나 장기 FID의 완전 동일성을 주장하지 않는다.

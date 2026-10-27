@@ -24,7 +24,7 @@ def main(args):
     torch.backends.cudnn.benchmark = False
     torch.manual_seed(23)
     engine = UpdateEngine(Generator().cuda(), Discriminator().cuda(),
-                          Config(batch=32, micro=args.micro))
+                          Config(batch=32, micro=args.micro,fast_regularization=args.fast_regularization))
     engine.augment.p.fill_(args.ada_p)
     real = torch.rand(32, 3, 64, 64, device='cuda') * 2 - 1
     labels = torch.arange(32, device='cuda') % 151
@@ -60,6 +60,7 @@ def main(args):
     assert peak < 20_000_000_000, peak
     print(json.dumps(dict(device=torch.cuda.get_device_name(), torch=torch.__version__,
         steps=args.steps, batch=32, micro=args.micro, initial_ada_p=args.ada_p,
+        fast_regularization=args.fast_regularization,
         seconds=elapsed, seconds_per_update=elapsed/args.steps,
         measured_phase_seconds=dict(totals), phase_calls=dict(calls),
         other_seconds=elapsed-sum(totals.values()), peak_allocated_bytes=peak,
@@ -72,4 +73,5 @@ if __name__ == '__main__':
     parser.add_argument('--steps', type=int, default=16)
     parser.add_argument('--micro', type=int, default=8)
     parser.add_argument('--ada-p', type=float, default=.10624)
+    parser.add_argument('--fast-regularization',action='store_true')
     main(parser.parse_args())

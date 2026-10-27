@@ -158,7 +158,7 @@ def tiny_update():
     print('PASS reduced-width smoke: Gmain/Greg/Dmain/Dreg, Adam, EMA, seeded sampling', result, flush=True)
 
 
-def gpu(batch, micro, ada_p):
+def gpu(batch, micro, ada_p, fast_regularization=False):
     if not torch.cuda.is_available():
         raise RuntimeError('Use the existing CUDA-enabled FastGen environment')
     free,total = torch.cuda.mem_get_info()
@@ -169,7 +169,7 @@ def gpu(batch, micro, ada_p):
     start = time.perf_counter()
     g = models.Generator().cuda()
     d = models.Discriminator().cuda()
-    engine = UpdateEngine(g,d,Config(batch=batch,micro=micro))
+    engine = UpdateEngine(g,d,Config(batch=batch,micro=micro,fast_regularization=fast_regularization))
     engine.augment.p.fill_(ada_p)
     torch.cuda.reset_peak_memory_stats()
     print('GPU full-size synthetic probe starting', batch, micro, flush=True)
@@ -196,9 +196,10 @@ if __name__ == '__main__':
     p.add_argument('--batch', type=int, default=4)
     p.add_argument('--micro', type=int, default=4)
     p.add_argument('--ada-p', type=float, default=1.)
+    p.add_argument('--fast-regularization',action='store_true')
     args = p.parse_args()
     torch.set_num_threads(4)
     if args.gpu:
-        gpu(args.batch,args.micro,args.ada_p)
+        gpu(args.batch,args.micro,args.ada_p,args.fast_regularization)
     else:
         skeleton(); operators(); augmentation(); counts(); tiny_update()
