@@ -1,0 +1,18 @@
+{
+  "checkpoint_step": 175000,
+  "source_sha256": "d3f556466a21f454f9eb90ecccd4ce907681336f8ebdab66b27e8858c57e54cc",
+  "export_sha256": "06701969baf0141c91d7167ab4ba244850d078fe7bc1a5ca1c61a76fb711b9f3",
+  "sampling_method": "submission ModelFewNFE.sample unchanged",
+  "precision": "fp32",
+  "seed": 20261002,
+  "generation_batch_size": 8,
+  "reference_count": 3020,
+  "generated_count": 3020,
+  "evaluate_py_sha256": "f201320f3505ad478096313eedf657388a0c6aca4af456095509e13807228adb",
+  "split_sha256": {
+    "train_split.txt": "c4068bdec8c5994fa14887d3335e762dd6a4da1bc6394a6df7fae96d293138c0",
+    "val_split.txt": "6dfba46a82c1bb329287d6da0f87be1b3b71d26c217150bf681f37cce4264df0",
+    "category_to_id.json": "7c27ec2a15fa4f70b5729319d596d3a80bc528cdeeb02f36b88877a6545b77e8"
+  },
+  "best_TRAIN755_FID": 67.1506349675297
+}

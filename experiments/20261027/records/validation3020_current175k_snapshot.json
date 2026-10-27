@@ -1,0 +1,6 @@
+{
+  "checkpoint_step": 175000,
+  "best_TRAIN755_FID": 67.1506349675297,
+  "source_sha256": "d3f556466a21f454f9eb90ecccd4ce907681336f8ebdab66b27e8858c57e54cc",
+  "export_sha256": "06701969baf0141c91d7167ab4ba244850d078fe7bc1a5ca1c61a76fb711b9f3"
+}

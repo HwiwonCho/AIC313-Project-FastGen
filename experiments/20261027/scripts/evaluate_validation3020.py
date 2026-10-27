@@ -26,13 +26,18 @@ def sha(path):
 def main():
     os.environ.setdefault('OMP_NUM_THREADS', '2')
     os.environ.setdefault('MKL_NUM_THREADS', '2')
+    # The shared data archive also contains its original checkpoint config.
+    # Keep the caller's frozen checkpoint identity when reusing that archive.
+    cfg = json.loads((ROOT/'validation3020_config.json').read_text())
     with tarfile.open(ROOT/'validation3020_data.tar.gz') as archive:
+        data_members = []
         for member in archive.getmembers():
             path = PurePosixPath(member.name)
             if path.is_absolute() or '..' in path.parts or not (member.isfile() or member.isdir()):
                 raise ValueError('Unsafe archive entry: '+member.name)
-        archive.extractall(ROOT)
-    cfg = json.loads((ROOT/'validation3020_config.json').read_text())
+            if path.parts and path.parts[0] in ('validation_data', 'project'):
+                data_members.append(member)
+        archive.extractall(ROOT, members=data_members)
     checkpoint = ROOT/'current_few_nfe.ckpt'
     assert sha(checkpoint) == cfg['export_sha256']
     assert sha(PROJECT/'evaluate.py') == cfg['evaluate_py_sha256']

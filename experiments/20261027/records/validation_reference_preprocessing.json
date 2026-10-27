@@ -1,0 +1,9 @@
+{
+  "total_images": 3020,
+  "modes": {
+    "RGB": 3019,
+    "P": 1
+  },
+  "white_compositing_changes_official_RGB_images": 0,
+  "examples": []
+}

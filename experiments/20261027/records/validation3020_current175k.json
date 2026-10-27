@@ -1,0 +1,35 @@
+{
+  "FID_validation3020": 39.33768117922858,
+  "checkpoint_step": 175000,
+  "checkpoint_sha256": "06701969baf0141c91d7167ab4ba244850d078fe7bc1a5ca1c61a76fb711b9f3",
+  "parameters": 95524611,
+  "reference_images": 3020,
+  "generated_images": 3020,
+  "samples_per_category": 20,
+  "actual_nfe": 4,
+  "actual_calls": {
+    "batches": 1512,
+    "image_forwards": 12080
+  },
+  "seed": 20261002,
+  "batch_size": 8,
+  "generation_precision": "fp32",
+  "sampling": "unchanged submitted ModelFewNFE.sample; default global noise streams",
+  "official_reference_and_generation_functions": true,
+  "evaluate_py_sha256": "f201320f3505ad478096313eedf657388a0c6aca4af456095509e13807228adb",
+  "clean_fid_mode": "clean (library default)",
+  "image_loader_workers": 0,
+  "server_training_interrupted": false,
+  "TA_measured": false,
+  "peak_allocated_bytes": 773647360,
+  "seconds": 184.368307799974,
+  "gpu": "NVIDIA GeForce RTX 5070 Ti",
+  "packages": {
+    "torch": "2.9.0+cu128",
+    "torchvision": "0.24.0+cu128",
+    "Pillow": "12.3.0",
+    "clean-fid": "0.1.35",
+    "numpy": "2.2.6",
+    "scipy": "1.15.3"
+  }
+}

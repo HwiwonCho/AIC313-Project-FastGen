@@ -1,0 +1,12 @@
+{
+  "checkpoint_step": 175000,
+  "evaluation_script_sha256": "e73623d3d59713e52cf4ab4ef6660ef9a6939010ba3117f2eee07ca55fccd948",
+  "server_snapshot_directory": "/root/FastGen/comparisons/validation3020_20261027/latest_best",
+  "comparison_to_135k": {
+    "validation3020_135k": 38.61317334428435,
+    "validation3020_175k": 39.33768117922858,
+    "delta": 0.7245078349442338
+  },
+  "checkpoint_selection": "existing server best selected by TRAIN755; unchanged",
+  "validation_used_to_change_training": false
+}
