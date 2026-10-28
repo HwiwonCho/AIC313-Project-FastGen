@@ -32,7 +32,9 @@ def skeleton():
     tree = ast.parse((project/'model.py').read_text(encoding='utf-8-sig'))
     for node in tree.body:
         if isinstance(node, ast.ClassDef) and node.name in reference['classes']:
-            assert hashlib.sha256(ast.dump(node, include_attributes=False).encode()).hexdigest() == reference['classes'][node.name]
+            # Python 3.12 adds empty PEP 695 fields to unchanged classes/functions.
+            canonical = ast.dump(node, include_attributes=False).replace(', type_params=[]', '')
+            assert hashlib.sha256(canonical.encode()).hexdigest() == reference['classes'][node.name]
     print('PASS skeleton: fixed content and Model/ModelFewNFE AST unchanged', flush=True)
 
 
