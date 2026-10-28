@@ -627,3 +627,38 @@ tolerances; the ordinary update test reports propagated gradient differences and
 checks final parameters separately. Deterministic mode is confined to verification
 processes and does not alter the training configuration. The native-repeat control
 without deterministic mode also showed 1.67% PL gradient variation after Gmain.
+
+
+## Recorded server runs
+
+Use the existing Linux environment and `python -m stylegan2.launch_tmux --run
+runs/<new-name> --data-root /path/to/data --fast-regularization --export-current`.
+This requires existing tmux only for server process management; inference does not.
+The actual trainer runs in tmux `fastgen-gan:train`, with a separate live `logs`
+window. Disconnecting SSH or powering off the client PC does not stop it.
+
+Each fresh run records:
+- `metrics.csv`: every update from step 1, G/D losses, lazy regularizers (blank
+  when not executed), D scores/signs, ADA, learning rates, time and peak memory.
+- `loss_curve.png`: explicitly labelled 100-update bin means, with raw data retained.
+- `samples/step_*.png` and metadata: step 1, 100, then every 500, never overwritten.
+  `early_samples/step_0000100` and `step_0000500` contain eight standalone images.
+- `fid_history.jsonl`: every full TRAIN-holdout evaluation, counts/protocol/seed
+  in source, step, source identity; `internal_fid.json` is only the latest view.
+  All-class sample grids are retained at evaluation points. Validation is not used.
+- `events.jsonl`, `timing.json`: session starts/resumes, saves, evaluations, errors,
+  completion, cumulative update time and active wall time. Time spent on discarded
+  uncheckpointed attempts remains counted; their metric rows are preserved in events.
+- `environment.json`, `config.json`, `split.json`, `source_manifest.json`, and
+  `source_snapshot/`: versions, model counts, seed/recipe, exact split and code.
+- Atomic `current.pt` for full-state recovery and `best_nfe1.pt` selected only by
+  TRAIN holdout. `--export-current` exports the selected best (or final EMA before
+  any full evaluation) to `checkpoints/one_nfe.ckpt` at orderly completion/stop.
+
+Create `STOP` in the run directory for a checkpointed exit. Resume explicitly with
+`stylegan2.train --resume` after removing STOP; code/data/recipe identity is strict.
+Technical 64-image FID checks are marked technical-only and never select a model.
+`verify_recording` tests observer invariance, durable step logs, rollback accounting,
+source provenance and eight early image outputs. This GAN branch still requires
+integration of the team's few-NFE model and the final two-page write-up before a
+complete two-model course submission; it does not claim those are already complete.

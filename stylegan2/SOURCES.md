@@ -46,3 +46,5 @@
 
 - `conv_gradfix.py`: 고정 NVIDIA `torch_utils/ops/conv2d_gradfix.py`를 출처로 삼아 제거된 cuDNN weight-gradient API를 내장 ATen `convolution_backward`로 교체했다. 원본 저작권 및 라이선스는 유지하며 vendor 원본은 수정하지 않았다. 명시적인 `--fast-regularization` 옵션의 PL/R1에서만 사용하고 기본 실행·일반 phase·추론은 native 경로를 유지한다.
 - `verify_conv.py`, `verify_update.py`: 미분 및 실제 update 수치 비교. `compare_speed.py`: baseline commit과 합성 ABBA 속도 비교. GPU 부동소수점 결과나 장기 FID의 완전 동일성을 주장하지 않는다.
+
+- `recording.py` 및 `launch_tmux.py`: 이 프로젝트의 매-step 기록, 원본 소스/환경/시간/샘플 보존, tmux 실행 관리. 학습 수식은 바꾸지 않는다. 기록 검증은 `verify_recording.py`에 포함했다.
