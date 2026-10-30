@@ -1,0 +1,16 @@
+{
+  "parent_code": "c9eb378",
+  "fresh_random_initialization": true,
+  "predecessor_weights_used": false,
+  "G": 64005784,
+  "D": 35048352,
+  "combined": 99054136,
+  "EMA": 64005784,
+  "parameter_budget": "G+D <=100M; frozen EMA separate",
+  "changes": [
+    "G channels 896/896/896/896/512",
+    "D channels 592/592/592/592/512",
+    "combined budget assertion"
+  ],
+  "recipe": "unchanged batch32 micro8 seed42 ADA bgc logistic R1 PL"
+}

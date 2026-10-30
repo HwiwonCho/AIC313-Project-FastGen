@@ -493,172 +493,84 @@ zero score
 
 
 
-## StyleGAN2-ADA one-NFE branch
+## Verified total-100M StyleGAN2-ADA (one-NFE only)
 
-This branch adds an isolated `stylegan2/` package. Existing SoFlow programs and
-fixed skeleton files are unchanged; only `ModelOneNFE` in `model.py` is wired to
-the new generator. No run data, training images, checkpoints, or Inception weights
-are included. Importing modules does not start training.
+This branch contains the **actual 99,054,136-parameter G+D architecture**, freshly
+trained from seed 42. G: 64,005,784; D: 35,048,352; frozen EMA: 64,005,784.
+The previous 198.75M run is not a submission candidate and its weights are not used.
+`ModelFewNFE` remains unimplemented here; merge the team's separate few-NFE work
+before assembling a submission requiring both checkpoints.
 
-```text
-stylegan2/
-  models.py          # 64x64, 151 classes; G 99,800,472 / D 98,947,632 parameters
-  recipe.py          # optimizer, lazy R1/PL, EMA and ADA; explicit step API
-  data.py            # provided TRAIN only; duplicate-group holdout and sampling
-  train.py           # explicit CLI, atomic recovery, internal TRAIN-holdout FID
-  portable_ops.py    # native PyTorch compatibility, no compiled CUDA extensions
-  conv_gradfix.py    # opt-in modern higher-order convolution path for PL/R1
-  verify.py          # skeleton, operator derivatives, sampling and loader checks
-  benchmark.py       # bounded random-input timing; never loads data/checkpoints
-  compare_speed.py   # same-seed ABBA timing/state comparison against eb9c864
-  skeleton.json      # fixed content and Model/ModelFewNFE verification hashes
-  upstream.py        # pinned NVIDIA source identity
-  vendor/            # NVIDIA sources and original license
-  SOURCES.md         # provenance and local adaptations
+### Reproduce the measured score
+
+Install the official requirements and the course PyTorch 2.6 / torchvision 0.21
+CUDA environment. No additional CUDA extension compilation is required. NumPy,
+SciPy and requests are transitive dependencies of the provided packages.
+Actual server: Python 3.12.3, torch 2.6.0+cu124, torchvision 0.21.0+cu124.
+See verification/policy_audit_20261030.json for observed package versions.
+
+Download the one-NFE checkpoint from the shared submission-materials folder:
+https://drive.google.com/drive/folders/1h1NHtZsqkPKZHIiIXX3RkuzJ3HhqslMD
+Place it at `checkpoints/one_nfe.ckpt`. It is NOT stored in Git.
+SHA256: `4c29d11c50be9af2963181a7c58cdaec79d621dcd6b66b1f17f01e7dbac5eeed`.
+
+```sh
+python evaluate.py --model_checkpoint checkpoints/one_nfe.ckpt --evaluate_mode one_nfe --data_root data/pokemon-generation-one-22k --split_dir data/pokemon-generation-one-22k --reference_dir results/val-reference --output_dir results/val-generated --batch_size 8 --device cuda
 ```
 
-From the repository root, with the existing FastGen environment:
+For the fixed seed (20261029), fresh output directories, and a per-batch one-G-call
+assertion, run the wrapper below. It executes the UNMODIFIED evaluate.py CLI via
+runpy; it does not replace its FID implementation or filter generated samples.
 
-```shell
-python -B -m stylegan2.verify
-python -B -m stylegan2.train --help
-# Optional synthetic timing only; discards all scratch weights:
-python -B -m stylegan2.benchmark --steps 16
+```sh
+python -m stylegan2.evaluate_official --checkpoint checkpoints/one_nfe.ckpt --data-root data/pokemon-generation-one-22k --output results/audit-108500
 ```
 
-Training is an explicit separate action. The following command is documentation,
-not an automatically launched job:
+Step 108500: **31.9207** from the official CLI; earlier function-based evaluation:
+31.9208749. Both use validation 3020 / generated 3020, 151 classes x 20, batch 8,
+seed 20261029, 1NFE. Small GPU numerical differences are possible. This is our
+self-evaluation, NOT a TA-measured leaderboard score. See
+verification/official_cli_108500.json. Same-step validation for the prior
+198.75M run is unavailable. Its 40.3475 at step 50000 is not a matched comparison.
 
-```shell
-python -B -m stylegan2.train --data-root /path/to/pokemon-generation-one-22k --run runs/stylegan2/example
+### Training and organization
+
+`stylegan2/models.py`: architecture; `recipe.py`: updates/EMA/ADA;
+`data.py`: TRAIN-only loader; `train.py`: training/checkpoints;
+`recording.py`: every-step loss/time/early images; `evaluate_official.py`: evaluation;
+`vendor/` and `SOURCES.md`: pinned NVIDIA sources, licenses and adaptations.
+Protected skeleton files and Model base class match official commit
+3ccf3261495bd144bf844b7f298d10406b53117a (line-ending-normalized comparison).
+requirements.txt is restored to that official package list.
+
+```sh
+# New training only; never use this to modify the currently running experiment.
+python -m stylegan2.train --data-root data/pokemon-generation-one-22k --run runs/new-experiment --steps 125000 --save-every 500 --sample-every 500 --eval-every 250000 --seed 42 --fast-regularization --export-current
+python -m stylegan2.verify
 ```
 
-The data root must contain `PokemonData/`; fixed manifests are read from this
-repository. No downloader is invoked by the trainer. Place `STOP` in the run
-folder for a checkpointed exit. `--resume` requires identical code, recipe and
-data identity. Relocating the old flat implementation into this package changes
-its source identity: old local `current.pt` files are intentionally not silently
-resumed by this branch. Their original folder remains the recovery environment.
-Generator state-dict keys are unchanged. Internal best exports use `backbone.`
-keys for the preserved skeleton checkpoint loader. `ModelFewNFE` remains as in
-the base branch; this is not a complete two-model submission.
+Training reads only provided TRAIN (17079), with duplicate-group fit/holdout split
+13663/3416 and class-balanced replacement sampling. No pretrained generator,
+teacher, external training images, or validation gradients. Inception is evaluation
+only. Batch32/micro8, logistic loss, R1/16, PL/4, ADA bgc, EMA10k images.
+Gradient accumulation is averaged by micro/batch (an explicit adaptation from
+upstream summed gradients). No change was made to the running trainer for this
+publication. Adding the evaluation wrapper changes source_identity: continue a
+running checkpoint only with its original source snapshot, not this new branch.
 
-**Dependencies.** The supplied `requirements.txt` is unchanged. No extra package
-installation, nvcc, Ninja, custom CUDA binary, or pretrained training network is
-required. NumPy is required by torchvision/clean-fid; requests by kagglehub and
-upstream dnnlib. These are existing transitive dependencies, not vendored wheels.
-The upstream dnnlib uses `distutils`; use Python 3.10, matching the starter setup.
-Verified environment: torch 2.9.0+cu128, torchvision 0.24.0+cu128, NumPy 2.2.6,
-Pillow 12.3.0, clean-fid 0.1.35, kagglehub 1.0.2, requests 2.34.2, tqdm 4.70.1.
-This is a tested version record, not a requirement to install CUDA 12.8 everywhere.
-The starter's torch 2.6 environment has not been tested by this branch. Clean-FID
-may obtain its standard evaluation-only Inception weights on first evaluation.
+Training selects its export using internal TRAIN FID. Validation-based human
+checkpoint selection is allowed by the TA clarification supplied by the team;
+validation is not used in training. Internal FID and validation FID are distinct.
+G+D <=100M is enforced, following the supplied TA clarification on joint models.
+Observed peak allocated VRAM and contiguous loss logging are in the policy audit.
+The run is still ongoing; time/log evidence is a snapshot, not final total time.
 
-**Recipe and limits.** Batch 32 / microbatch 8, full conditional G and projection
-D, NVIDIA logistic loss, lazy R1 every 16 updates and PL every 4, style mixing,
-EMA and ADA bgc are preserved. Accumulated gradients are averaged by micro/batch,
-as in the stopped local run; upstream's loop sums them. This intentional retained
-difference is not silently changed during packaging. The trainer enforces peak
-allocated memory below 20,000,000,000 bytes; short probes do not certify a whole
-future run. Each G, EMA and D separately has fewer than 100M parameters. Sampler
-verification checks one generator call for one-NFE output.
+### Submission materials
 
-**Evaluation.** Model selection uses a duplicate-group-separated holdout within
-provided TRAIN, with matched reference/generated label counts. No validation
-images are opened by training or internal evaluation. Internal FID is not directly
-comparable to official validation3020 FID. No new quality claim or FID improvement
-is made by this packaging change.
-
-The organization follows the separation of network/data/training/testing and
-preservation of skeleton interfaces in
-[Yunseo's scaled experiment](https://github.com/yunseopark-kaist/FastGen/tree/a80bbd0adbaff5ac81f7d9330955ac5e0a1b8421).
-Its training algorithm and white-fill affine augmentation are not copied.
-See [source attribution](stylegan2/SOURCES.md) for the pinned NVIDIA implementation.
-
-
-**Regularization execution optimization.** `conv_gradfix.py` adapts NVIDIA's
-higher-order derivative implementation to modern ATen `convolution_backward`.
-With `--fast-regularization`, only PL/R1 use this path; ordinary phases and inference still use native forward
-operations. Model widths, batch/microbatch, losses and regularization intervals,
-augmentation, optimizer, EMA and random draw order are unchanged. No extra
-packages or compiled CUDA extensions are introduced. Built-in ATen compatibility
-is tested on torch 2.9.0; torch 2.6 remains untested.
-
-On RTX 5070 Ti, a same-seed ABBA comparison of 16-update synthetic cycles measured
-baseline 3.116/3.035 s/update and adapted 1.288/1.257 s/update: mean 3.076 -> 1.273,
-58.6% less update time (2.42x throughput). Peak allocated was 5.38 GB. These are
-bounded synthetic results, not end-to-end training/server estimates. The rejected
-synchronization-only candidate was 0.6% slower; cuDNN autotuning is NOT enabled.
-
-Validation commands (no TRAIN/checkpoint access or saved weights):
-
-```shell
-python -B -m stylegan2.verify_conv
-python -B -m stylegan2.verify_update
-python -B -m stylegan2.verify_update --gpu --frozen-phases
-python -B -m stylegan2.verify_update --gpu
-python -B -m stylegan2.compare_speed --steps 16
-```
-
-`compare_speed` reads baseline commit eb9c864 from Git history, needed only for this
-developer diagnostic. Construction, warmup and state hashing are outside timing.
-GPU baseline repeats themselves were not bitwise identical; hashes are reported,
-not treated as numerical equivalence proof. Derivative and update comparisons use
-explicit numerical tolerances. Neither unchanged eventual FID nor identical final
-weights across long runs is guaranteed. The stopped original run is not resumed
-or migrated automatically; its source-identity protection remains in force.
-
-
-The faster path is **opt-in**: add `--fast-regularization` to the training command.
-Default execution retains the original derivative backend, respecting the request
-not to change the stopped run's behavior. Switching the flag changes the saved
-recipe; strict resume refuses a mismatch rather than silently switching methods.
-No existing checkpoint was resumed or converted. Benchmarking that path alone:
-`python -B -m stylegan2.benchmark --steps 16 --fast-regularization`.
-
-Full-size deterministic GPU checks at equal weights measured relative L2 gradient
-difference 0 for Gmain/Dmain, 1.47e-5 for PL and 2.56e-3 for R1 (R1 max absolute
-error 3.44e-8). After one complete scratch update, parameter relative differences
-were G/EMA 7.37e-8 and D 3.56e-5; maximum element differences were 0.00434 and
-0.00732 respectively. Tiny gradient differences can be amplified by Adam and
-subsequent phases. This is mathematical/numerical validation, NOT proof of equal
-long-run FID. `verify_update --gpu --frozen-phases` checks equal-weight derivative
-tolerances; the ordinary update test reports propagated gradient differences and
-checks final parameters separately. Deterministic mode is confined to verification
-processes and does not alter the training configuration. The native-repeat control
-without deterministic mode also showed 1.67% PL gradient variation after Gmain.
-
-
-## Recorded server runs
-
-Use the existing Linux environment and `python -m stylegan2.launch_tmux --run
-runs/<new-name> --data-root /path/to/data --fast-regularization --export-current`.
-This requires existing tmux only for server process management; inference does not.
-The actual trainer runs in tmux `fastgen-gan:train`, with a separate live `logs`
-window. Disconnecting SSH or powering off the client PC does not stop it.
-
-Each fresh run records:
-- `metrics.csv`: every update from step 1, G/D losses, lazy regularizers (blank
-  when not executed), D scores/signs, ADA, learning rates, time and peak memory.
-- `loss_curve.png`: explicitly labelled 100-update bin means, with raw data retained.
-- `samples/step_*.png` and metadata: step 1, 100, then every 500, never overwritten.
-  `early_samples/step_0000100` and `step_0000500` contain eight standalone images.
-- `fid_history.jsonl`: every full TRAIN-holdout evaluation, counts/protocol/seed
-  in source, step, source identity; `internal_fid.json` is only the latest view.
-  All-class sample grids are retained at evaluation points. Validation is not used.
-- `events.jsonl`, `timing.json`: session starts/resumes, saves, evaluations, errors,
-  completion, cumulative update time and active wall time. Time spent on discarded
-  uncheckpointed attempts remains counted; their metric rows are preserved in events.
-- `environment.json`, `config.json`, `split.json`, `source_manifest.json`, and
-  `source_snapshot/`: versions, model counts, seed/recipe, exact split and code.
-- Atomic `current.pt` for full-state recovery and `best_nfe1.pt` selected only by
-  TRAIN holdout. `--export-current` exports the selected best (or final EMA before
-  any full evaluation) to `checkpoints/one_nfe.ckpt` at orderly completion/stop.
-
-Create `STOP` in the run directory for a checkpointed exit. Resume explicitly with
-`stylegan2.train --resume` after removing STOP; code/data/recipe identity is strict.
-Technical 64-image FID checks are marked technical-only and never select a model.
-`verify_recording` tests observer invariance, durable step logs, rollback accounting,
-source provenance and eight early image outputs. This GAN branch still requires
-integration of the team's few-NFE model and the final two-page write-up before a
-complete two-model course submission; it does not claim those are already complete.
+Drive contains a one-NFE checkpoint, code archive, loss CSV/curve, early 8 images,
+time/config/environment records, evaluation/policy evidence, and a one-NFE
+write-up contribution. These are not a complete combined two-model submission.
+The team must supply its actual team ID, separate few-NFE checkpoint/implementation,
+and merge both methods into the final <=2-page write-up (references excluded).
+No training data, resume optimizer checkpoint, credentials or personal paths are
+included in Git. Source attribution: stylegan2/SOURCES.md and vendor/LICENSE.txt.

@@ -10,10 +10,10 @@ from . import portable_ops
 portable_ops.install()
 from training import networks as sg
 
-G_CHANNELS = {4: 1152, 8: 1152, 16: 1152, 32: 1152, 64: 512}
-D_CHANNELS = {4: 1048, 8: 1048, 16: 1048, 32: 1048, 64: 512}
-EXPECTED_G = 99_800_472
-EXPECTED_D = 98_947_632
+G_CHANNELS = {4: 896, 8: 896, 16: 896, 32: 896, 64: 512}
+D_CHANNELS = {4: 592, 8: 592, 16: 592, 32: 592, 64: 512}
+EXPECTED_G = 64_005_784
+EXPECTED_D = 35_048_352
 
 
 def labels_to_condition(labels, batch=None):

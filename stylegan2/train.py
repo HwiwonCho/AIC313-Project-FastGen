@@ -197,7 +197,8 @@ def main(args):
         cfg=Config(batch=32,micro=8,fast_regularization=args.fast_regularization)
         torch.cuda.reset_peak_memory_stats()
         engine=UpdateEngine(Generator().cuda(),Discriminator().cuda(),cfg)
-        assert count_parameters(engine.G)<=100_000_000 and count_parameters(engine.D)<=100_000_000
+        assert count_parameters(engine.G)+count_parameters(engine.D)<=100_000_000, 'Combined G+D exceeds 100M'
+        assert count_parameters(engine.ema)<=100_000_000, 'EMA exceeds 100M'
         sampler=torch.Generator().manual_seed(args.seed+1)
         best=float('inf')
         if args.resume:best=load_current(run/'current.pt',engine,sampler,data,source)

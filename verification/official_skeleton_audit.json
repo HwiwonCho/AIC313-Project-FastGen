@@ -1,0 +1,15 @@
+{
+  "official_commit": "3ccf3261495bd144bf844b7f298d10406b53117a",
+  "checks": {
+    "dataset.py": true,
+    "download_dataset.py": true,
+    "evaluate.py": true,
+    "src/utils.py": true,
+    "requirements.txt": true,
+    "data/pokemon-generation-one-22k/train_split.txt": true,
+    "data/pokemon-generation-one-22k/val_split.txt": true,
+    "data/pokemon-generation-one-22k/category_to_id.json": true,
+    "Model_base_AST": true
+  },
+  "requirements_note": "Restored official unpinned package list for sharing; measured server versions recorded separately."
+}

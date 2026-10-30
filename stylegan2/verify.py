@@ -106,11 +106,13 @@ def augmentation():
 def counts():
     # Construct real modules on CPU, then release; no learned weights saved.
     g = models.Generator(mixed=False)
-    assert models.count_parameters(g) == models.EXPECTED_G
+    g_count = models.count_parameters(g)
+    assert g_count == models.EXPECTED_G
     print('G parameters:', models.count_parameters(g), flush=True)
     del g; gc.collect()
     d = models.Discriminator(mixed=False)
     assert models.count_parameters(d) == models.EXPECTED_D
+    assert g_count + models.count_parameters(d) <= 100_000_000
     print('D parameters:', models.count_parameters(d), flush=True)
     del d; gc.collect()
 

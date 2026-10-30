@@ -1,0 +1,18 @@
+{
+  "iteration": 108500,
+  "fid": 31.9207,
+  "seed": 20261029,
+  "batch_size": 8,
+  "reference_count": 3020,
+  "generated_count": 3020,
+  "nfe": 1,
+  "calls": {
+    "sample_batches": 378,
+    "generated_images": 3020,
+    "generator_calls": 378
+  },
+  "seconds": 65.52029824256897,
+  "checkpoint_sha256": "4c29d11c50be9af2963181a7c58cdaec79d621dcd6b66b1f17f01e7dbac5eeed",
+  "evaluate_sha256": "6caf742b7667ec8f1dce9e4deb6da6b220bda672d23df6351c478312b66f3546",
+  "protocol": "Unmodified evaluate.py __main__, validation3020, no sample filtering"
+}
