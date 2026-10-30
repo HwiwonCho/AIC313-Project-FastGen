@@ -6,7 +6,7 @@
 - 공식 base repository: https://github.com/KAIST-Visual-AI-Group/AIC313-Project-FastGen
 - 실제 복사 원본: 공식 skeleton을 유지한 기존 로컬 실험 사본
 - `dataset.py`, `download_dataset.py`, `evaluate.py`, `requirements.txt`, `src/*.py`, 고정 split 및 category mapping을 원본 그대로 복사했다. 이미지와 체크포인트는 복사하지 않았다.
-- `model.py`의 `Model` 기본 클래스 및 `ModelFewNFE`는 보존했다. `ModelOneNFE`만 새 생성기에 연결했다. 기존 VAE 정의는 원본 파일의 일부이며 제출 모델에 등록되지 않는다.
+- `model.py`의 `Model` 기본 클래스 및 `ModelFewNFE`는 보존했다. `ModelOneNFE`만 새 생성기에 연결했다. 공식 원본에는 없는 기존 실험용 VAE 정의는 공유본에서 제거했다.
 
 ## 공식 StyleGAN2-ADA 소스
 
@@ -42,9 +42,8 @@
 
 - 패키지 분리, 상대 import, 데이터 루트 CLI로 개인 PC 절대 경로 의존성을 제거했다. 학습 레시피와 가중치 키는 유지한다.
 - 구조 참고: https://github.com/yunseopark-kaist/FastGen/tree/a80bbd0adbaff5ac81f7d9330955ac5e0a1b8421 — 기본 skeleton 보존, 네트워크/데이터/학습/검증 분리. 학습 코드는 이 저장소에서 복사하지 않았다.
-- `benchmark.py`: 데이터나 체크포인트 없이 합성 입력으로 단계별 비용을 측정하며 가중치는 저장하지 않는다.
 
 - `conv_gradfix.py`: 고정 NVIDIA `torch_utils/ops/conv2d_gradfix.py`를 출처로 삼아 제거된 cuDNN weight-gradient API를 내장 ATen `convolution_backward`로 교체했다. 원본 저작권 및 라이선스는 유지하며 vendor 원본은 수정하지 않았다. 명시적인 `--fast-regularization` 옵션의 PL/R1에서만 사용하고 기본 실행·일반 phase·추론은 native 경로를 유지한다.
-- `verify_conv.py`, `verify_update.py`: 미분 및 실제 update 수치 비교. `compare_speed.py`: baseline commit과 합성 ABBA 속도 비교. GPU 부동소수점 결과나 장기 FID의 완전 동일성을 주장하지 않는다.
+- `verify_conv.py`, `verify_update.py`: 미분 및 실제 update 수치 비교. GPU 부동소수점 결과나 장기 FID의 완전 동일성을 주장하지 않는다.
 
 - `recording.py` 및 `launch_tmux.py`: 이 프로젝트의 매-step 기록, 원본 소스/환경/시간/샘플 보존, tmux 실행 관리. 학습 수식은 바꾸지 않는다. 기록 검증은 `verify_recording.py`에 포함했다.

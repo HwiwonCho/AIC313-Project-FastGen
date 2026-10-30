@@ -73,12 +73,29 @@ G+D <=100M is enforced, following the supplied TA clarification on joint models.
 Observed peak allocated VRAM and contiguous loss logging are in the policy audit.
 The run is still ongoing; time/log evidence is a snapshot, not final total time.
 
-### Submission materials
+### Mid-term submission materials
 
-Drive contains a one-NFE checkpoint, code archive, loss CSV/curve, early 8 images,
-time/config/environment records, evaluation/policy evidence, and a one-NFE
-write-up contribution. These are not a complete combined two-model submission.
-The team must supply its actual team ID, separate few-NFE checkpoint/implementation,
-and merge both methods into the final <=2-page write-up (references excluded).
-No training data, resume optimizer checkpoint, credentials or personal paths are
-included in Git. Source attribution: stylegan2/SOURCES.md and vendor/LICENSE.txt.
+Drive folder 01 contains only this code and the verified one-NFE checkpoint
+(parts plus a stdlib restore script). Folder 02 separately preserves loss CSV,
+loss curve, early8 samples and time/config/evaluation evidence for the final submission.
+No report draft is included in the current Drive package. The mid-term requires
+source and checkpoint; the final submission additionally needs the team's write-up.
+The real team ID and the separate few-NFE contribution remain the team's responsibility.
+The run is ongoing; preserved time/log snapshots are not final training totals.
+
+### Reused versus adapted code
+
+Official evaluate.py, dataset.py, downloader, Model base and fixed manifests stay
+unchanged. FID is computed by the provided clean-fid call, not a custom metric.
+NVIDIA mapping/synthesis/discriminator blocks, loss and ADA are reused. Local
+adaptations are the small-data channel configuration, TRAIN-only cached loader,
+training/recording loop, and portable operators. Bilinear double-backward,
+modulated convolution and modern ATen gradfix are compatibility/performance
+adaptations, not claims of bitwise equivalence. Activation/filtering use NVIDIA's
+existing reference implementations. Data RGB/resize is duplicated in the cached
+TRAIN loader intentionally; it matches the official path but could be consolidated
+in a future experiment. The NumPy filter-bank initialization replaces an existing
+SciPy operation although SciPy is already a clean-fid dependency; it is not needed
+for dependency reduction and the image-filter augmentation is disabled. We retain
+this historical adaptation to avoid changing the trained implementation during
+submission preparation. See SOURCES.md and numerical verification modules.
