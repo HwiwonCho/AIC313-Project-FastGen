@@ -31,7 +31,6 @@
 - `models.py`: 151클래스/64x64, G/D 채널 표, one-NFE sampling adapter. 각 기본 블록과 forward는 NVIDIA 구현을 사용한다.
 - `portable_ops.py`: CUDA extension 없는 reference filtering/activation, 고차 입력 미분을 지원하는 고정 좌표 bilinear sampler, batch별 대형 weight 복제를 피하는 동등한 modulated convolution.
 - `recipe.py`: caller-driven bounded update API, gradient accumulation 정규화, lazy Adam 보정, EMA 및 ADA 제어. 자동 본학습·저장 기능은 없다.
-- `verify.py`: 합성 입력을 이용한 국소 수치검증 및 선택적 단기 GPU 검증. 성능/FID 검증이 아니다.
 - `data.py`: 원본 dataset.py와 같은 RGB/resize/normalize, TRAIN 내부의 중복 그룹 분리 및 클래스 균등 샘플링. validation 이미지에는 접근하지 않는다.
 - `train.py`: 실제 TRAIN 학습 루프, 상태 전체의 원자적 저장/재개, 내부 holdout의 clean-fid 평가. 평가 수식과 Inception은 제공 evaluate.py와 같고 Windows worker 수는 0으로 둔다. Windows에서 png/PNG가 중복 열거되지 않도록 평가 중에만 확장자를 png 하나로 제한하고 복원한다. 내부 평가 장수와 label 분포는 공식 validation3020과 다르므로 점수를 직접 비교할 수 없다.
 - 평가 전용 Inception은 clean-fid의 표준 평가 모델이다. Git에는 가중치를 포함하지 않으며 첫 평가에서 clean-fid가 캐시/다운로드를 관리한다. 모델 학습에는 사용하지 않는다.
@@ -44,6 +43,5 @@
 - 구조 참고: https://github.com/yunseopark-kaist/FastGen/tree/a80bbd0adbaff5ac81f7d9330955ac5e0a1b8421 — 기본 skeleton 보존, 네트워크/데이터/학습/검증 분리. 학습 코드는 이 저장소에서 복사하지 않았다.
 
 - `conv_gradfix.py`: 고정 NVIDIA `torch_utils/ops/conv2d_gradfix.py`를 출처로 삼아 제거된 cuDNN weight-gradient API를 내장 ATen `convolution_backward`로 교체했다. 원본 저작권 및 라이선스는 유지하며 vendor 원본은 수정하지 않았다. 명시적인 `--fast-regularization` 옵션의 PL/R1에서만 사용하고 기본 실행·일반 phase·추론은 native 경로를 유지한다.
-- `verify_conv.py`, `verify_update.py`: 미분 및 실제 update 수치 비교. GPU 부동소수점 결과나 장기 FID의 완전 동일성을 주장하지 않는다.
 
-- `recording.py` 및 `launch_tmux.py`: 이 프로젝트의 매-step 기록, 원본 소스/환경/시간/샘플 보존, tmux 실행 관리. 학습 수식은 바꾸지 않는다. 기록 검증은 `verify_recording.py`에 포함했다.
+- `recording.py`: 매-step loss, 학습 시간, 초기 샘플을 저장하는 학습 재현 코드. 검증 도구와 결과는 별도 Drive 학습기록에 보관한다.

@@ -1,6 +1,6 @@
 """FastGen 64x64/151-class channel adaptation of pinned StyleGAN2-ADA.
 
-Source: https://github.com/NVlabs/stylegan2-ada-pytorch (upstream.py).
+Source: https://github.com/NVlabs/stylegan2-ada-pytorch (see SOURCES.md).
 Uses original blocks/forward methods; only channel tables and label API differ.
 """
 import torch
