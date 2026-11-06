@@ -91,6 +91,8 @@ class UpdateEngine:
                             z, models.labels_to_condition(fake_y), sync=False,
                             gain=interval*cfg.micro/cfg.batch)
                 # Fail explicitly on numerical faults; never silently sanitize NaNs.
+                if phase == 'Gmain' and hasattr(self,'twins_regularize'):
+                    self.twins_regularize()
                 for p in module.parameters():
                     if p.grad is not None and not torch.isfinite(p.grad).all():
                         raise FloatingPointError(f'Nonfinite gradient in {phase}')

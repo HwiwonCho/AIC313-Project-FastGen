@@ -505,33 +505,55 @@ zero score
 
 
 
-## One-NFE GAN in this branch
+## 1NFE / 4NFE GAN
 
-The official skeleton is preserved. ModelOneNFE loads the conditional StyleGAN2-ADA
-in stylegan2/models.py; ModelFewNFE remains the separate team's responsibility.
-G64,005,784 + D35,048,352 =99,054,136 parameters. Sampling uses one G forward.
-No pretrained training networks or extra compiled CUDA extensions are used.
-Use the official requirements and PyTorch2.6 / torchvision0.21 environment.
+공식 skeleton과 기존 `stylegan2/` 구조를 유지한다.
+
+- `model.py`: 1NFE는 G 1회, 4NFE는 공유 잠재 보정망 R 3회 뒤 G 1회 실행.
+- `stylegan2/`: 조건부 StyleGAN2-ADA, 학습 루프, NoisyTwins 정규화.
+- `latent_four.py`: 작은 클래스 조건부 잠재 보정망.
+- `train_few.py`: G/D를 고정하고 R만 학습.
+- `blend_checkpoint.py`: G의 학습 파라미터 평균. 버퍼는 기준 체크포인트 유지.
+
+공식 `requirements.txt` 환경을 사용한다. 출처와 변형 설명은
+[stylegan2/SOURCES.md](stylegan2/SOURCES.md)에 정리했다.
+체크포인트와 학습 기록은 이전처럼 Git에 포함하지 않는다.
+
+### 학습
 
 ```sh
-python -m stylegan2.train --data-root data/pokemon-generation-one-22k --run runs/gan --steps 125000 --save-every 500 --sample-every 500 --eval-every 250000 --seed 42 --fast-regularization --export-current
-python evaluate.py --model_checkpoint checkpoints/one_nfe.ckpt --evaluate_mode one_nfe --data_root data/pokemon-generation-one-22k --split_dir data/pokemon-generation-one-22k --reference_dir results/reference --output_dir results/generated --batch_size 8 --device cuda
+python -m stylegan2.train --data-root data/pokemon-generation-one-22k --run runs/gan --steps 176112 --save-every 500 --sample-every 500 --eval-every 64000 --seed 42 --fast-regularization --twins-start 160112 --export-current
 ```
 
-Get the checkpoint and restoration instructions from:
-https://drive.google.com/drive/folders/1rhDRtx7L0g1kPQ9XdxLfKXwogD-wIEn9
-Loss/time/early samples and verification records are kept separately:
-https://drive.google.com/drive/folders/192Li2LnULKBWr9jfUZBxwfeArqZ3oMXz
+`--resume`으로 같은 run의 전체 상태를 이어서 학습한다.
+평균에 사용할 163000, 168112, 172112, 176112 시점은 각 시점에서
+`--steps`를 지정해 멈추고 `runs/gan/current.pt`를 별도 파일로 보관한다.
+R 학습에 사용할 D는 160112 시점의 전체 체크포인트에서 가져온다.
+기존 실험을 이어 학습할 때는 그 실험의 원본 소스를 사용한다.
 
-Step108500 checkpoint SHA256:
-4c29d11c50be9af2963181a7c58cdaec79d621dcd6b66b1f17f01e7dbac5eeed
-Fixed seed20261029/batch8 validation3020 self-evaluation: FID31.9207;
-the ordinary evaluate.py CLI does not set a seed and may vary across runs.
-This is not a TA score. The run is ongoing; later snapshots may improve or worsen.
+### 1NFE 체크포인트 생성
 
-stylegan2/ contains models, TRAIN-only cached data loading, the update recipe,
-training/recording and portable operators. vendor/ contains imported NVIDIA
-modules and their license. Sources and adaptations: stylegan2/SOURCES.md.
-No personal monitor, audit files, test scripts or old experiments are required.
-Changing source packaging changes the training resume source identity: continue
-existing runs with their original source snapshot, not this cleaned branch.
+```sh
+python blend_checkpoint.py --start snapshots/163000.pt --early snapshots/168112.pt --middle snapshots/172112.pt --end snapshots/176112.pt --alpha .75 --output checkpoints/one_nfe.ckpt
+```
+
+네 시점의 G 파라미터를 각각 25%로 평균하고 163000의 버퍼를 유지한다.
+입력은 EMA를 포함한 전체 학습 체크포인트 또는 배포용 G 체크포인트다.
+
+### 4NFE 학습 및 체크포인트 생성
+
+```sh
+python blend_checkpoint.py --start snapshots/163000.pt --middle snapshots/172112.pt --end snapshots/176112.pt --alpha .5 --output checkpoints/few_generator.ckpt
+python train_few.py --generator checkpoints/few_generator.ckpt --discriminator-state snapshots/160112.pt --data-root data/pokemon-generation-one-22k --run runs/refiner
+```
+
+G 비율은 163000:172112:176112 = 50:25:25이며, R은 seed42로 1000회 학습한다.
+완료된 `runs/refiner/few_nfe.pt`를 `checkpoints/few_nfe.ckpt`로 복사한다.
+`train_few.py`의 run에는 새 경로를 사용한다.
+
+### 평가
+
+```sh
+python evaluate.py --model_checkpoint checkpoints/one_nfe.ckpt --evaluate_mode one_nfe --data_root data/pokemon-generation-one-22k --split_dir data/pokemon-generation-one-22k --reference_dir results/reference --output_dir results/one --batch_size 8 --device cuda
+python evaluate.py --model_checkpoint checkpoints/few_nfe.ckpt --evaluate_mode few_nfe --data_root data/pokemon-generation-one-22k --split_dir data/pokemon-generation-one-22k --reference_dir results/reference --output_dir results/few --batch_size 8 --device cuda
+```

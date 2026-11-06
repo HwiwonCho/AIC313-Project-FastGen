@@ -45,3 +45,8 @@
 - `conv_gradfix.py`: 고정 NVIDIA `torch_utils/ops/conv2d_gradfix.py`를 출처로 삼아 제거된 cuDNN weight-gradient API를 내장 ATen `convolution_backward`로 교체했다. 원본 저작권 및 라이선스는 유지하며 vendor 원본은 수정하지 않았다. 명시적인 `--fast-regularization` 옵션의 PL/R1에서만 사용하고 기본 실행·일반 phase·추론은 native 경로를 유지한다.
 
 - `recording.py`: 매-step loss, 학습 시간, 초기 샘플을 저장하는 학습 재현 코드. 검증 도구와 결과는 별도 Drive 학습기록에 보관한다.
+
+
+NoisyTwins training regularizer: Rangwani et al., CVPR 2023, https://github.com/val-iisc/NoisyTwins . This implementation uses fixed embedding noise std=0.1 and a separate 32-pair mapping batch; it is not an exact reproduction of the original training recipe.
+
+Latent refiner research motivation: Liu et al., Collaborative Sampling in Generative Adversarial Networks, AAAI 2020, https://doi.org/10.1609/aaai.v34i04.5933 . The submitted variant learns a small latent correction network in advance; unlike that paper, no discriminator or backpropagation runs during sampling.

@@ -98,17 +98,11 @@ class ModelOneNFE(Model):
         return self.backbone.sample(shape, device=device, category=category, seed=seed)
 
 
-class ModelFewNFE(Model):
-    """Student model evaluated with no more than four model evaluations."""
+from latent_four import few_init, few_sample
 
-    def __init__(self, device="cpu", **kwargs):
-        raise NotImplementedError("Implement the few-NFE model constructor.")
-    def sample(
-        self,
-        shape: tuple[int, ...],
-        *,
-        device: torch.device | str = "cuda",
-        category: torch.Tensor | None = None,
-        **kwargs,
-    ) -> torch.Tensor:
-        raise NotImplementedError("Implement sample() in ModelFewNFE.")
+
+class ModelFewNFE(Model):
+    """Three shared latent-refiner evaluations followed by one generator call."""
+
+    __init__ = few_init
+    sample = few_sample

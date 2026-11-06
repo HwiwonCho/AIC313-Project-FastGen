@@ -204,8 +204,10 @@ def main(args):
         if args.resume:best=load_current(run/'current.pt',engine,sampler,data,source)
         config=dict(recipe=vars(cfg),data=data.summary,seed=args.seed,source_identity=source,
                     target_steps=args.steps,eval_every=args.eval_every,save_every=args.save_every,
-                    sample_every=args.sample_every,loss_logging='every update; empty regularizer = not executed',
+                    sample_every=args.sample_every,twins_start=args.twins_start,loss_logging='every update; empty regularizer = not executed',
                     validation_role='not accessed by training or automatic selection')
+        if args.resume and json.loads((run/'config.json').read_text()).get('twins_start') != args.twins_start:
+            raise RuntimeError('Resume twins_start differs from recorded recipe')
         if not args.resume:atomic_json(run/'config.json',config)
         recorder=Recorder(run,engine,ROOT.parent,args.resume,session_start)
         print('START',{'pid':os.getpid(),'iteration':engine.iteration,'target':args.steps},flush=True)
@@ -217,6 +219,10 @@ def main(args):
             recorder.event('checkpoint',path='current.pt');recorder.curves()
         while engine.iteration<args.steps:
             if (run/'STOP').exists():break
+            if args.twins_start is not None and engine.iteration >= args.twins_start and not hasattr(engine,'twins_regularize'):
+                from .noisy_twins import attach
+                attach(engine)
+                recorder.event('noisy_twins_enabled',iteration=engine.iteration)
             update_start=time.perf_counter()
             real,labels=data.batch(cfg.batch,sampler,engine.device)
             metrics=engine.step(real,labels)
@@ -281,6 +287,7 @@ if __name__=='__main__':
     p.add_argument('--eval-every',type=int,default=250000,help='real-image exposures')
     p.add_argument('--seed',type=int,default=42)
     p.add_argument('--resume',action='store_true')
+    p.add_argument('--twins-start',type=int,default=None,help='Enable NoisyTwins at this completed update; selected recipe:160112')
     p.add_argument('--fast-regularization',action='store_true')
     p.add_argument('--smoke-eval',action='store_true')
     p.add_argument('--export-current',action='store_true',help='Export TRAIN-selected best EMA, or final EMA if no full evaluation exists')
